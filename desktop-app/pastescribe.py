@@ -16,7 +16,7 @@ from tkinter import messagebox, scrolledtext, ttk
 
 from keyboard_backend import ForegroundGuard, PynputBackend, make_stop_hotkey
 from typer_core import (NEWLINE_ENTER, NEWLINE_SKIP, NEWLINE_SPACE, apply_newline_mode,
-                        normalize_text, type_text)
+                        MIN_DELAY_MS, normalize_text, type_text)
 
 APP_TITLE = "PasteScribe"
 
@@ -65,7 +65,7 @@ class App:
         self.newline = tk.StringVar(value=next(iter(NEWLINE_CHOICES)))
 
         ttk.Label(opts, text="Pausa entre letras (ms):").grid(row=0, column=0, sticky="w")
-        ttk.Spinbox(opts, from_=0, to=2000, increment=10, width=6, textvariable=self.delay_ms).grid(
+        ttk.Spinbox(opts, from_=10, to=2000, increment=10, width=6, textvariable=self.delay_ms).grid(
             row=0, column=1, padx=6, sticky="w")
         ttk.Label(opts, text="Cuenta atrás (s):").grid(row=0, column=2, sticky="w", padx=(16, 0))
         ttk.Spinbox(opts, from_=1, to=60, width=4, textvariable=self.countdown).grid(
@@ -110,7 +110,7 @@ class App:
             messagebox.showinfo(APP_TITLE, "Pega primero el texto que quieres escribir.")
             return
         try:
-            delay = max(0, int(self.delay_ms.get()))
+            delay = max(MIN_DELAY_MS, int(self.delay_ms.get()))
             countdown = max(1, int(self.countdown.get()))
         except (tk.TclError, ValueError):
             messagebox.showerror(APP_TITLE, "La pausa y la cuenta atrás deben ser números enteros.")

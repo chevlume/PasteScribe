@@ -6,6 +6,9 @@
 
   const TEXT_INPUT_TYPES = new Set(["", "text", "search", "url", "tel", "email", "password", "number"]);
   const WAIT_FOR_FIELD_MS = 60000;
+  // Pausa mínima por letra: sin ella el bucle no cede el control al navegador,
+  // el texto aparece de golpe y la tecla Esc no llega a procesarse.
+  const MIN_DELAY_MS = 5;
 
   const state = { running: false, stop: false, phase: "idle", typed: 0, total: 0, message: "" };
 
@@ -55,7 +58,7 @@
   }
 
   function charDelay(base, humanize, ch) {
-    let d = Math.max(0, base);
+    let d = Math.max(MIN_DELAY_MS, base);
     if (!humanize) return d;
     d *= 0.5 + Math.random();
     if (ch === " " || ch === "\n") d *= 1.8;

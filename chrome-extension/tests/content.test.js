@@ -82,6 +82,13 @@ const check = (name, got, want) => { const ok = JSON.stringify(got) === JSON.str
   await wait();
   check('focus lost msg', (await status()).message.startsWith('Detenido: el campo perdió el foco'), true);
 
+  // velocidad 0: no debe escribir de golpe y Esc debe poder detenerla
+  await page.fill('#ta', ''); await page.focus('#ta');
+  await start({ text: 'x'.repeat(3000), delayMs: 0 });
+  await page.waitForTimeout(150);
+  await page.keyboard.press('Escape'); await wait();
+  check('delay 0 stoppable by Esc', (await page.inputValue('#ta')).length < 3000, true);
+
   // doble inicio y texto vacío
   await page.focus('#ta');
   const r1 = await start({ text: 'z'.repeat(100), delayMs: 20 });

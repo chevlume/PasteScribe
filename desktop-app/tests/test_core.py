@@ -6,7 +6,7 @@ import unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from typer_core import (NEWLINE_ENTER, NEWLINE_SKIP, NEWLINE_SPACE, apply_newline_mode,  # noqa: E402
-                        char_delay, normalize_text, type_text)
+                        MIN_DELAY_MS, char_delay, normalize_text, type_text)
 
 
 class NoSleep:
@@ -87,6 +87,13 @@ class TypeTextTests(unittest.TestCase):
         self.assertTrue(all(0.05 <= v <= 0.15 for v in vals))
         self.assertGreater(char_delay(100, True, ".", random.Random(1)),
                            char_delay(100, True, "a", random.Random(1)))
+
+    def test_delay_never_below_minimum(self):
+        # Con 0 ms se vuelcan las teclas de golpe: debe aplicarse la pausa mínima.
+        s = NoSleep()
+        type_text("abcd", lambda c: None, delay_ms=0, sleep=s)
+        self.assertAlmostEqual(s.total, 3 * MIN_DELAY_MS / 1000, places=6)
+        self.assertEqual(char_delay(-5, False, "a", random.Random(1)), MIN_DELAY_MS / 1000)
 
     def test_empty_text(self):
         r = type_text("", lambda c: None, sleep=NoSleep())

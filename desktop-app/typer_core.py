@@ -14,6 +14,10 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 
 SLICE_SECONDS = 0.02  # granularidad con la que se comprueba "detener"
+# Pausa mínima entre letras. Sin ella se vuelcan miles de teclas de golpe en la
+# cola del sistema: el texto aparece "en bloque", el programa de destino sigue
+# procesándolas cuando ya hemos terminado y Esc no puede detenerlas.
+MIN_DELAY_MS = 10
 
 
 def normalize_text(text: str) -> str:
@@ -68,7 +72,7 @@ def char_delay(
     rng: random.Random,
 ) -> float:
     """Pausa (en segundos) a aplicar tras escribir ``ch``."""
-    delay = max(0.0, delay_ms) / 1000.0
+    delay = max(float(MIN_DELAY_MS), delay_ms) / 1000.0
     if not humanize:
         return delay
     delay *= rng.uniform(0.5, 1.5)
