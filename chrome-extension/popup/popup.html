@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PasteScribe</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>PasteScribe</h1>
+  <label for="text">Texto a escribir en la pestaña actual</label>
+  <textarea id="text" rows="8" placeholder="Pega aquí el texto (Ctrl+V)…" spellcheck="false"></textarea>
+
+  <div class="row">
+    <label for="delay">Pausa entre letras</label>
+    <input id="delay" type="range" min="0" max="500" step="5" value="60">
+    <output id="delayOut">60 ms</output>
+  </div>
+  <label class="check"><input id="humanize" type="checkbox" checked> Ritmo humano (variación aleatoria)</label>
+
+  <div class="buttons">
+    <button id="start" class="primary">Escribir</button>
+    <button id="stop" disabled>Detener</button>
+  </div>
+  <p id="status" role="status">Haz clic antes en el campo de destino y pulsa «Escribir». Si no hay ninguno enfocado, espera a que hagas clic en uno.</p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
