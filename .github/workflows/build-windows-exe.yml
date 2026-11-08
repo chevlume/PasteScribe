@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
   push:
     tags: ['v*']
-    branches: ['claude/text-typing-app-extension-w6eixt']  # TEMPORARY: validation run
 
 jobs:
   build:
