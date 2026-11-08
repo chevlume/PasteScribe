@@ -26,4 +26,4 @@ If these practices change, this document and the date above will be updated.
 
 ## Contact
 
-For privacy questions: **<YOUR_CONTACT_EMAIL>**
+For privacy questions: **chevlume@gmail.com**
