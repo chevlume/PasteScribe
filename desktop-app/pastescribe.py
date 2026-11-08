@@ -26,7 +26,7 @@ __version__ = "1.4.0"
 APP_TITLE = "PasteScribe"
 
 def log_path() -> Path:
-    """Error log. The packaged .exe has no console, so errors would otherwise be invisible."""
+    """Where unexpected errors are saved, so they can be reported."""
     return Path(os.environ.get("PASTESCRIBE_LOG") or Path.home() / ".pastescribe.log")
 
 
@@ -272,36 +272,7 @@ class App:
         self.root.destroy()
 
 
-def selftest() -> int:
-    """``PasteScribe --selftest``: checks that the window and the keyboard control start.
-
-    Used to verify a packaged build. Returns 0 if everything works, 1 otherwise.
-    """
-    try:
-        root = tk.Tk()
-        root.withdraw()
-        App(root)
-        root.update()
-        root.destroy()
-        PynputBackend()
-        hotkey = make_stop_hotkey(lambda: None)
-        hotkey.start()
-        hotkey.stop()
-        ForegroundGuard().arm()
-    except Exception:
-        log_error(traceback.format_exc())
-        if sys.stdout:
-            print("SELFTEST FAILED\n" + traceback.format_exc())
-        return 1
-    if sys.stdout:
-        print(f"SELFTEST OK ({APP_TITLE} {__version__})")
-    return 0
-
-
-def main(argv=None) -> None:
-    argv = sys.argv[1:] if argv is None else argv
-    if "--selftest" in argv:
-        sys.exit(selftest())
+def main() -> None:
     root = tk.Tk()
     App(root)
     root.mainloop()

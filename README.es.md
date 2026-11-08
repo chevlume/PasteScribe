@@ -13,14 +13,9 @@ Escribe un texto pegado **letra por letra**, como si lo teclearas tú. Hay dos v
 
 La interfaz sale **en inglés por defecto**; cámbiala a español con el selector *Idioma* de la ventana (se recuerda).
 
-### Windows: un único `.exe`, sin ventana de consola
+### Windows
 
-Compílalo una vez en tu PC con Windows (necesita Python 3.9+ instalado):
-
-1. Haz doble clic en **`desktop-app\build_windows.bat`**. Instala lo necesario, compila y comprueba la app.
-2. Coge **`desktop-app\dist\PasteScribe.exe`** y cópialo donde quieras (por ejemplo, el escritorio). Doble clic: se abre **sin ventana de consola**.
-
-¿Sin un PC con Windows a mano? En GitHub, pestaña *Actions* → *Build Windows exe* → *Run workflow*, y descarga `PasteScribe-windows` desde *Artifacts* de la ejecución.
+Descarga **`PasteScribe.exe`** desde la página de [Releases](https://github.com/chevlume/PasteScribe/releases) y haz doble clic. Es un único archivo y se abre **sin ventana de consola**.
 
 Ojo: el `.exe` no está firmado digitalmente, así que Windows SmartScreen puede mostrar «Windows protegió su PC» (pulsa *Más información* → *Ejecutar de todas formas*), y algunos antivirus marcan como sospechoso cualquier programa que teclea por ti (falso positivo). Si ocurre un error, los detalles se guardan en `%USERPROFILE%\.pastescribe.log`.
 
@@ -44,19 +39,20 @@ En Windows también puedes hacer doble clic en `iniciar_windows.bat`, que instal
 4. Empieza a escribir. **Esc** (en todo el sistema) o el botón *Detener* lo paran al instante.
 
 Seguridad:
-- **Saltos de línea** (opción por defecto: *Convertir en espacio*): pulsar Enter en un cuadro de búsqueda o en un formulario lo envía y rompe la escritura. Elige *Pulsar Enter* solo para campos de varias líneas (editores, `textarea`).
+- **Saltos de línea** (por defecto: *Convertir en espacio*): pulsar Enter en un cuadro de búsqueda o en un formulario lo envía y rompe la escritura. Elige *Pulsar Enter* solo para campos de varias líneas (editores, áreas de texto).
 - Si cambias de ventana mientras escribe (Alt+Tab, otra ventana que toma el foco), la escritura se detiene sola (solo Windows).
-- En Windows, Esc se detecta consultando el teclado, sin interceptar la entrada del sistema.
 - Si algo se descontrola: Esc; si no responde, cierra la app desde el Administrador de tareas (Ctrl+Mayús+Esc).
 
 Notas:
 - **macOS**: concede a la terminal/Python permisos de *Accesibilidad* y *Supervisión de entrada* (Ajustes del Sistema → Privacidad y seguridad), si no, el sistema ignora las teclas.
 - **Linux**: funciona en X11. En Wayland los programas no pueden inyectar teclas en otras ventanas; usa una sesión Xorg.
 - Los tabuladores se escriben como Tab (en un formulario web, Tab cambia de campo) y, con *Pulsar Enter*, en un editor de código el autosangrado puede añadir espacios extra.
-- La pausa mínima entre letras es de 10 ms (5 ms en la extensión). Sin pausa, el sistema recibe miles de teclas de golpe: el texto aparece "en bloque", el programa de destino sigue escribiendo cuando PasteScribe ya terminó y Esc no puede detenerlo.
+- La pausa mínima entre letras es de 10 ms (5 ms en la extensión): sin pausa, el sistema recibe miles de teclas de golpe y el texto aparece en bloque sin poder detenerlo.
 - En Linux, si escribes muchos caracteres exóticos a la vez, usa una pausa de **30 ms o más** (por defecto 60 ms).
 
 ## Extensión de Chrome (Manifest V3)
+
+La interfaz sale **en inglés por defecto**; cámbiala a español con el selector EN/ES del panel (se recuerda).
 
 Instalación (modo desarrollador):
 
@@ -65,39 +61,23 @@ Instalación (modo desarrollador):
 
 Uso:
 
-1. Haz clic en el campo de la página donde quieras escribir (cuadro de texto, `textarea`, campo de contraseña o editor `contenteditable`).
-2. Abre la extensión, pega el texto, ajusta la velocidad y pulsa **Escribir** (la interfaz sale en inglés por defecto; cámbiala a español con el selector del panel, y se recuerda). El popup se cierra y la escritura empieza.
+1. Haz clic en el campo de la página donde quieras escribir (cuadro de texto, área de texto, campo de contraseña o editor de texto enriquecido como el cuadro de publicar de X).
+2. Abre la extensión, pega el texto, ajusta la velocidad y pulsa **Escribir**. El panel se cierra y la escritura empieza.
 3. Si no había ningún campo enfocado, la extensión espera (hasta 60 s) a que hagas clic en uno.
-4. **Esc** en la página, el botón *Detener* del aviso en pantalla o *Detener* en el popup lo paran. Si el campo pierde el foco, la escritura se detiene para no escribir donde no debe.
+4. **Esc** en la página, el botón *Detener* del aviso en pantalla o *Detener* en el panel lo paran. Si el campo pierde el foco, la escritura se detiene para no escribir donde no debe.
 
-Privacidad: solo actúa en la pestaña activa cuando pulsas el icono (permiso `activeTab`), no envía nada a ningún servidor y el texto solo se guarda en la sesión del navegador. Permisos: `activeTab`, `scripting`, `storage`.
+Privacidad: solo actúa en la pestaña activa cuando pulsas el icono, no envía nada a ningún servidor y el texto solo se guarda en la sesión del navegador. Permisos: `activeTab`, `scripting`, `storage`. Política completa: [English](docs/privacy-policy.en.md) · [Español](docs/privacy-policy.md).
 
 Limitaciones:
 - No funciona en páginas internas (`chrome://…`, Chrome Web Store) ni en iframes de otro origen.
 - Los editores que dibujan su propio texto (p. ej. Google Docs) no usan campos de texto estándar y pueden ignorarlo.
 - En campos de una sola línea los saltos de línea se convierten en espacios.
-- Los editores Draft.js (como el cuadro de publicar de X) reciben cada carácter como un evento de pegado en lugar de escritura normal, porque se rompen si el navegador edita su texto directamente. Está probado contra un editor Draft.js real en local, no contra x.com. Si una web falla, la app de escritorio funciona en todas partes.
+- Si una web falla, la app de escritorio funciona en todas partes.
 
-## Publicar en la Chrome Web Store
+## Apoyo
 
-El paquete, las políticas de privacidad y las imágenes están preparados; solo falta tu cuenta de desarrollador.
+Si PasteScribe te resulta útil, sígueme en X para apoyarme y enterarte de mis próximos proyectos: [@chevlume](https://x.com/chevlume)
 
-1. Rellena tu correo en [`docs/privacy-policy.md`](docs/privacy-policy.md) (español) y [`docs/privacy-policy.en.md`](docs/privacy-policy.en.md) (inglés) y publícalas en una **URL pública** (por ejemplo, ese mismo archivo en GitHub si el repositorio es público, o un Gist público).
-2. Crea el paquete: `tools/package_extension.sh` (genera `dist/pastescribe-v<versión>.zip`). Sin Bash, comprime **el contenido** de `chrome-extension/` (que `manifest.json` quede en la raíz del ZIP).
-3. Entra en el [Panel para desarrolladores](https://chrome.google.com/webstore/devconsole), acepta el contrato y paga la cuota única de registro (5 USD).
-4. *Nuevo elemento* → sube el ZIP → completa *Ficha de Play Store*, *Privacidad* y *Distribución*. Propósito único: *escribe, letra por letra, un texto pegado por el usuario en el campo de texto enfocado de la pestaña activa*. Permisos a justificar: `activeTab` (actúa solo sobre la pestaña actual cuando el usuario pulsa el icono), `scripting` (inserta el script que escribe) y `storage` (guarda la velocidad y, durante la sesión del navegador, el texto pegado). Sin permisos de sitios web, sin datos recopilados, sin código remoto. Imágenes en `store-assets/en/` y `store-assets/es/` (se regeneran con `LANG_UI=en node tools/make_store_assets.js`). La extensión está traducida al inglés (por defecto) y al español: el panel tiene un selector EN/ES.
-5. *Enviar para revisión*. La primera revisión suele tardar de 1 a 3 días laborables.
+## Licencia
 
-Para cada actualización: sube `version` en `chrome-extension/manifest.json`, vuelve a crear el ZIP y súbelo como nueva versión.
-
-## Pruebas
-
-```bash
-cd desktop-app && python -m unittest discover -s tests     # motor de escritura, traducciones, lógica de la ventana
-xvfb-run -a python tests/gui_real_test.py                  # la ventana real (necesita tkinter y un servidor X; Linux)
-npm i playwright && LANG_UI=es node tests/extension/content.test.js && LANG_UI=en node tests/extension/content.test.js   # script de contenido en Chromium
-```
-
-Test de regresión con un editor Draft.js (el cuadro de publicar de X usa Draft.js): `cd tests/extension/draft && npm install && npm test`.
-
-`python tools/make_icons.py` regenera los iconos de la extensión.
+Apache License 2.0 — ver [LICENSE](LICENSE).
