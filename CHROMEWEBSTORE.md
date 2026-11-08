@@ -199,6 +199,7 @@ Pendiente (puede ser la página de Issues del repositorio si es público)
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
+| 1.3.1 | 2026-11-08 | Compatibilidad con editores Draft.js (cuadro para publicar en X). | Draft |
 | 1.3.0 | 2026-11-08 | Inglés por defecto con selector EN/ES en el panel; README en inglés. | Draft |
 | 1.2.0 | 2026-11-08 | Interfaz en inglés y español (según el idioma del navegador); ficha bilingüe. | No enviada |
 | 1.1.0 | 2026-11-08 | Pausa mínima por letra (Esc siempre funciona); indicador de progreso; versión mostrada. | No enviada |
@@ -210,6 +211,7 @@ Pendiente (puede ser la página de Issues del repositorio si es público)
 - **Riesgo de revisión:** una extensión que escribe texto "como si lo tecleara una persona" puede examinarse con más atención, porque podría usarse para saltarse bloqueos de pegado o detección de bots. Las descripciones (ES y EN) deben ser honestas sobre su función (arriba lo es) y no sugerir esos usos. La opción de pausas irregulares se describe tal cual («variación aleatoria»).
 - Interfaz en inglés (por defecto) y español. La interfaz sale en inglés por defecto (cualquier idioma del navegador) y se cambia con el selector del panel. Para añadir un idioma: carpeta nueva en `chrome-extension/_locales/<código>/messages.json`, una opción en el selector de `popup.html` y su ficha en el panel.
 - No funciona en iframes de otro origen ni en editores que dibujan su propio texto.
+- Editores Draft.js (como el cuadro de publicar de X): se comprobó contra un editor Draft.js real en local, pero no contra x.com directamente.
 
 ### Rejection History
 Ninguno todavía.

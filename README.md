@@ -78,6 +78,7 @@ Limitations:
 - It does not work on internal pages (`chrome://…`, the Chrome Web Store) or in cross-origin iframes.
 - Editors that draw their own text (e.g. Google Docs) don't use standard text fields and may ignore it.
 - In single-line fields, line breaks are turned into spaces.
+- Draft.js editors (such as X's post box) get each character as a paste event instead of normal typing, because they break when the browser edits their text directly. This is tested against a real Draft.js editor locally, not against x.com itself. If a site misbehaves, the desktop app works everywhere.
 
 ## Publishing to the Chrome Web Store
 
@@ -98,5 +99,7 @@ cd desktop-app && python -m unittest discover -s tests     # typing engine, tran
 xvfb-run -a python tests/gui_real_test.py                  # the real window (needs tkinter + an X server; Linux)
 npm i playwright && LANG_UI=en node tests/extension/content.test.js && LANG_UI=es node tests/extension/content.test.js   # content script in Chromium
 ```
+
+Draft.js editor regression test (X's post box uses Draft.js): `cd tests/extension/draft && npm install && npm test`.
 
 `python tools/make_icons.py` regenerates the extension icons.

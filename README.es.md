@@ -76,6 +76,7 @@ Limitaciones:
 - No funciona en páginas internas (`chrome://…`, Chrome Web Store) ni en iframes de otro origen.
 - Los editores que dibujan su propio texto (p. ej. Google Docs) no usan campos de texto estándar y pueden ignorarlo.
 - En campos de una sola línea los saltos de línea se convierten en espacios.
+- Los editores Draft.js (como el cuadro de publicar de X) reciben cada carácter como un evento de pegado en lugar de escritura normal, porque se rompen si el navegador edita su texto directamente. Está probado contra un editor Draft.js real en local, no contra x.com. Si una web falla, la app de escritorio funciona en todas partes.
 
 ## Publicar en la Chrome Web Store
 
@@ -96,5 +97,7 @@ cd desktop-app && python -m unittest discover -s tests     # motor de escritura,
 xvfb-run -a python tests/gui_real_test.py                  # la ventana real (necesita tkinter y un servidor X; Linux)
 npm i playwright && LANG_UI=es node tests/extension/content.test.js && LANG_UI=en node tests/extension/content.test.js   # script de contenido en Chromium
 ```
+
+Test de regresión con un editor Draft.js (el cuadro de publicar de X usa Draft.js): `cd tests/extension/draft && npm install && npm test`.
 
 `python tools/make_icons.py` regenera los iconos de la extensión.

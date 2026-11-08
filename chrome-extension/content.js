@@ -100,8 +100,28 @@
     return true;
   }
 
+  // Editores Draft.js (p. ej. el cuadro para publicar en X): se rompen si el navegador
+  // modifica su DOM con execCommand, así que se les "pega" cada carácter, que es lo que
+  // sí gestionan ellos mismos. El resto de campos sigue el camino normal de abajo.
+  function isDraftEditor(el) {
+    return !!(el.closest && el.closest('.DraftEditor-root, .public-DraftEditor-content, [data-contents="true"]'));
+  }
+
+  // true si el editor tomó el evento (llamó a preventDefault), es decir, lo insertó él.
+  function insertViaPaste(el, text) {
+    try {
+      const data = new DataTransfer();
+      data.setData("text/plain", text);
+      const ev = new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true, composed: true });
+      return !el.dispatchEvent(ev);
+    } catch (_) {
+      return false;
+    }
+  }
+
   function insertChar(el, ch) {
     const doc = el.ownerDocument;
+    if (isDraftEditor(el) && insertViaPaste(el, ch)) return true;
     if (ch === "\n") {
       if (isTextarea(el)) return doc.execCommand("insertText", false, "\n") || insertViaSetter(el, "\n");
       if (isInput(el)) return doc.execCommand("insertText", false, " ") || insertViaSetter(el, " ");
