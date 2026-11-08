@@ -1,4 +1,12 @@
 const $ = (id) => document.getElementById(id);
+const t = (key, ...subs) => chrome.i18n.getMessage(key, subs.map(String)) || key;
+
+function applyI18n() {
+  document.documentElement.lang = chrome.i18n.getUILanguage().split("-")[0];
+  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
+  for (const el of document.querySelectorAll("[data-i18n-placeholder]")) el.placeholder = t(el.dataset.i18nPlaceholder);
+}
+applyI18n();
 const textEl = $("text");
 const delayEl = $("delay");
 const humanizeEl = $("humanize");
@@ -34,9 +42,9 @@ async function runInTab(tabId, func, args = []) {
 function friendlyError(err) {
   const msg = String(err && err.message ? err.message : err);
   if (/cannot access|chrome:\/\/|extensions gallery|not be scripted/i.test(msg)) {
-    return "Esta página no permite extensiones (p. ej. chrome:// o la Chrome Web Store). Abre una página web normal.";
+    return t("popupErrRestricted");
   }
-  return `Error: ${msg}`;
+  return t("popupErrGeneric", msg);
 }
 
 async function saveSettings() {
@@ -66,9 +74,7 @@ async function refreshStatus() {
     if (st.running) {
       startBtn.disabled = true;
       stopBtn.disabled = false;
-      setStatus(st.phase === "waiting"
-        ? "Esperando a que hagas clic en un campo de texto…"
-        : `Escribiendo… ${st.typed}/${st.total}`);
+      setStatus(st.phase === "waiting" ? t("popupWaiting") : t("popupTyping", st.typed, st.total));
     } else if (st.message) {
       setStatus(st.message);
     }
@@ -81,7 +87,7 @@ async function refreshStatus() {
 startBtn.addEventListener("click", async () => {
   const text = textEl.value;
   if (!text) {
-    setStatus("Pega primero el texto que quieres escribir.", true);
+    setStatus(t("popupErrNoText"), true);
     return;
   }
   try {
@@ -108,7 +114,7 @@ stopBtn.addEventListener("click", async () => {
     await runInTab(tab.id, "stop");
     stopBtn.disabled = true;
     startBtn.disabled = false;
-    setStatus("Detenido.");
+    setStatus(t("popupStopped"));
   } catch (err) {
     setStatus(friendlyError(err), true);
   }

@@ -1,8 +1,10 @@
 # Chrome Web Store Listing — PasteScribe
 
 > Last Updated: 2026-11-08
+>
+> La extensión está traducida (inglés por defecto + español, carpeta `_locales/`). En el panel, la ficha base es el inglés y se añade el español desde el selector de idioma de «Ficha de Play Store» → «Añadir idioma».
 
-## Store Listing
+## Store Listing — ESPAÑOL (traducción)
 
 **Extension Name** [REQUIRED]
 PasteScribe
@@ -40,7 +42,7 @@ No funciona en páginas internas de Chrome ni en la tienda de extensiones. Los e
 SOPORTE
 ¿Algún problema o sugerencia? Escríbenos a <TU_CORREO_DE_CONTACTO>.
 
-Versión 1.1.0: la velocidad mínima evita que el texto aparezca de golpe y permite detenerlo siempre con Esc.
+Versión 1.2.0: ya disponible en español e inglés. Una velocidad mínima evita que el texto aparezca de golpe y permite detenerlo siempre con Esc.
 ```
 
 **Category** [REQUIRED]
@@ -50,21 +52,86 @@ Productivity (Productividad)
 Escribe, letra por letra, un texto pegado por el usuario en el campo de texto enfocado de la pestaña activa.
 
 **Primary Language** [REQUIRED]
-Spanish (español)
+English (la extensión usa `default_locale: en`); el español se añade como traducción
+
+## Store Listing — ENGLISH (default language)
+
+**Extension Name**
+PasteScribe
+
+**Short Description** (≤132 characters)
+Types text you paste, letter by letter, into the text field of the active tab. Adjustable speed; stop anytime with Esc.
+
+**Detailed Description**
+```
+PasteScribe types text that you paste, letter by letter, into the text field of the tab you have open.
+
+FEATURES
+• Types into text boxes, text areas, password fields and rich-text editors on the page
+• Adjustable speed, from very fast to slow
+• Optional irregular pauses between letters, with random variation
+• Stops instantly with the Esc key or the Stop button
+• If the field loses focus, it stops typing so it doesn't type where it shouldn't
+• Remembers your preferred speed
+
+HOW TO USE
+1. Click the text field on the page where you want to type.
+2. Open PasteScribe from the toolbar and paste your text.
+3. Choose the speed and press "Type". The panel closes and typing begins.
+4. If no field was selected, it waits until you click one.
+
+PRIVACY
+PasteScribe does not collect or send any data. It makes no internet connections. The text you paste is only kept in your browser for the current session, and your settings stay on your own computer.
+
+PERMISSIONS
+• "Read and change data on the current site": only used on the active tab, when you press the extension's button, to type into the field you selected. PasteScribe does not read the content of pages.
+
+LIMITATIONS
+It does not work on Chrome's internal pages or on the extension store. Editors that draw their own text (for example, some online word processors) may ignore it. In single-line fields, line breaks are turned into spaces.
+
+SUPPORT
+Found a problem or have a suggestion? Write to <YOUR_CONTACT_EMAIL>.
+
+Version 1.2.0: now available in English and Spanish. A minimum typing speed prevents text from appearing all at once and lets you always stop with Esc.
+```
+
+**Category**
+Productivity
+
+**Single Purpose**
+Types text pasted by the user, letter by letter, into the focused text field of the active tab.
+
+**Primary Language**
+English
+
+### Permissions justification (English — for the review team)
+
+| Permission | Justification |
+|------------|---------------|
+| activeTab | Grants temporary access only to the current tab when the user clicks the extension icon. This is what allows typing the text into the selected field of that tab, without requesting permanent access to any website. |
+| scripting | Injects into the active tab the small program that types the pasted text, letter by letter, into the field the user has selected, and lets the user stop typing. |
+| storage | Saves the chosen speed and the irregular-pauses option (local storage), and keeps the pasted text only for the browser session so it isn't lost when the panel closes. |
+| host_permissions | None. The extension does not request access to any website. |
+
+**Privacy Policy URL (English)**
+Pending: publish `docs/privacy-policy.en.md` at a public URL (the Spanish one is `docs/privacy-policy.md`). The dashboard has a single privacy-policy field; use the English one, or a page that links both.
+
 
 ## Graphics & Assets
 
-| Asset | Dimensions | Status | Filename |
-|-------|-----------|--------|----------|
+La tienda permite subir imágenes distintas por idioma. Subir las de `en/` a la ficha en inglés y las de `es/` a la española.
+
+| Asset | Dimensions | Status | Files |
+|-------|-----------|--------|-------|
 | Store Icon [REQUIRED] | 128×128 PNG | ✅ Ready | `chrome-extension/icons/icon-128.png` |
-| Screenshot 1 [REQUIRED] | 1280×800 | ✅ Ready | `store-assets/screenshot-1-escribiendo.png` |
-| Screenshot 2 [RECOMMENDED] | 1280×800 | ✅ Ready | `store-assets/screenshot-2-pasos.png` |
-| Small Promo Tile [RECOMMENDED] | 440×280 | ✅ Ready | `store-assets/promo-tile-440x280.png` |
-| Marquee Promo Tile | 1400×560 | ⬜ Not created (opcional) | |
+| Screenshot 1 [REQUIRED] | 1280×800 | ✅ Ready | `store-assets/en/screenshot-1-escribiendo.png`, `store-assets/es/screenshot-1-escribiendo.png` |
+| Screenshot 2 [RECOMMENDED] | 1280×800 | ✅ Ready | `store-assets/en/screenshot-2-pasos.png`, `store-assets/es/screenshot-2-pasos.png` |
+| Small Promo Tile [RECOMMENDED] | 440×280 | ✅ Ready | `store-assets/en/promo-tile-440x280.png`, `store-assets/es/promo-tile-440x280.png` |
+| Marquee Promo Tile | 1400×560 | ⬜ Not created (optional) | |
 
 ### Screenshot Notes
-Se regeneran con `node tools/make_store_assets.js`, usando el código real de la extensión.
-1. Un formulario web con el texto escribiéndose y el indicador de progreso con el botón Detener.
+Se regeneran con `LANG_UI=en node tools/make_store_assets.js` y `LANG_UI=es node tools/make_store_assets.js`, usando el código y las traducciones reales de la extensión.
+1. Un formulario web con el texto escribiéndose y el indicador de progreso con el botón Stop/Detener.
 2. El panel de la extensión (texto, velocidad, opciones) con los tres pasos de uso.
 Si cambia la interfaz del popup o del indicador, hay que volver a generarlas.
 
@@ -108,7 +175,7 @@ No usa código remoto: todo el JavaScript va dentro del paquete. Sin ofuscación
 ## Privacy Policy
 
 **Privacy Policy URL** [REQUIRED]
-Pendiente de publicar `docs/privacy-policy.md` en una URL pública (ver README, sección «Publicar en la Chrome Web Store») y rellenar el correo de contacto antes.
+Pendiente de publicar `docs/privacy-policy.md` (español) y `docs/privacy-policy.en.md` (inglés) en una URL pública (ver README, sección «Publicar en la Chrome Web Store») y rellenar el correo de contacto antes.
 
 ## Distribution
 
@@ -130,14 +197,15 @@ Pendiente (puede ser la página de Issues del repositorio si es público)
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
-| 1.1.0 | 2026-11-08 | Pausa mínima por letra (Esc siempre funciona); indicador de progreso; versión mostrada. | Draft |
+| 1.2.0 | 2026-11-08 | Interfaz en inglés y español; ficha bilingüe. | Draft |
+| 1.1.0 | 2026-11-08 | Pausa mínima por letra (Esc siempre funciona); indicador de progreso; versión mostrada. | No enviada |
 | 1.0.0 | 2026-11-08 | Primera versión (no se llegó a publicar). | Draft |
 
 ## Review Notes
 
 ### Known Issues / Limitations
-- **Riesgo de revisión:** una extensión que escribe texto "como si lo tecleara una persona" puede examinarse con más atención, porque podría usarse para saltarse bloqueos de pegado o detección de bots. La descripción debe ser honesta sobre su función (arriba lo es) y no sugerir esos usos. La opción de pausas irregulares se describe tal cual («variación aleatoria»).
-- Solo interfaz en español. Si se quiere ampliar a otros idiomas, habría que añadir traducciones de la interfaz y de la ficha.
+- **Riesgo de revisión:** una extensión que escribe texto "como si lo tecleara una persona" puede examinarse con más atención, porque podría usarse para saltarse bloqueos de pegado o detección de bots. Las descripciones (ES y EN) deben ser honestas sobre su función (arriba lo es) y no sugerir esos usos. La opción de pausas irregulares se describe tal cual («variación aleatoria»).
+- Interfaz en inglés (por defecto) y español. Otros idiomas de Chrome ven la interfaz en inglés. Para añadir un idioma: carpeta nueva en `chrome-extension/_locales/<código>/messages.json` y su ficha en el panel.
 - No funciona en iframes de otro origen ni en editores que dibujan su propio texto.
 
 ### Rejection History

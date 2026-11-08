@@ -2,6 +2,20 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const contentJs = fs.readFileSync(require('path').join(__dirname, '..', '..', 'chrome-extension', 'content.js'), 'utf8');
+const LANG = process.env.LANG_UI || 'es';
+const messages = JSON.parse(fs.readFileSync(require('path').join(__dirname, '..', '..', 'chrome-extension', '_locales', LANG, 'messages.json'), 'utf8'));
+// Imita chrome.i18n.getMessage (placeholders $NAME$ -> $1..$9 -> sustituciones)
+const i18nStub = (messages) => {
+  window.chrome = { i18n: { getUILanguage: () => 'xx', getMessage: (key, subs = []) => {
+    const m = messages[key]; if (!m) return '';
+    const text = m.message.replace(/\$([A-Za-z0-9_@]+)\$/g, (_, n) => (m.placeholders && m.placeholders[n.toLowerCase()] || { content: '' }).content);
+    return text.replace(/\$([1-9])/g, (_, i) => (subs[i - 1] === undefined ? '' : subs[i - 1]));
+  } } };
+};
+const T = {
+  es: { done16: 'Listo: 16 caracteres escritos.', cancelled: 'Cancelado.', stopped: 'Detenido:', focus: 'Detenido: el campo perdió el foco' },
+  en: { done16: 'Done: 16 characters typed.', cancelled: 'Cancelled.', stopped: 'Stopped:', focus: 'Stopped: the field lost focus' },
+}[LANG];
 const html = `<!doctype html><body>
 <input id="inp" type="text"><textarea id="ta"></textarea>
 <div id="ce" contenteditable="true" style="min-height:40px;border:1px solid"></div>
@@ -13,6 +27,7 @@ const check = (name, got, want) => { const ok = JSON.stringify(got) === JSON.str
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.setContent(html);
+  await page.evaluate(i18nStub, messages);
   await page.evaluate(contentJs);
   const start = (cfg) => page.evaluate((c) => window.__pastescribe.start(c), cfg);
   const wait = () => page.waitForFunction(() => !window.__pastescribe.status().running, null, { timeout: 15000 });
@@ -22,7 +37,7 @@ const check = (name, got, want) => { const ok = JSON.stringify(got) === JSON.str
   await page.focus('#inp');
   await start({ text: 'Hola ñandú 😀\nfin', delayMs: 1, humanize: false }); await wait();
   check('input', await page.inputValue('#inp'), 'Hola ñandú 😀 fin');
-  check('input msg', (await status()).message, 'Listo: 16 caracteres escritos.');
+  check('input msg', (await status()).message, T.done16);
 
   // textarea con saltos de línea y eventos input reales
   await page.evaluate(() => { window.__ev = 0; document.getElementById('ta').addEventListener('input', () => window.__ev++); });
@@ -62,7 +77,7 @@ const check = (name, got, want) => { const ok = JSON.stringify(got) === JSON.str
   await page.waitForTimeout(400);
   check('readonly waits', (await status()).phase, 'waiting');
   await page.keyboard.press('Escape'); await wait();
-  check('esc cancels wait', (await status()).message, 'Cancelado.');
+  check('esc cancels wait', (await status()).message, T.cancelled);
 
   // Esc durante la escritura
   await page.fill('#ta', ''); await page.focus('#ta');
@@ -71,7 +86,7 @@ const check = (name, got, want) => { const ok = JSON.stringify(got) === JSON.str
   await page.keyboard.press('Escape'); await wait();
   const st = await status();
   const v = await page.inputValue('#ta');
-  check('esc stops typing', st.message.startsWith('Detenido:') && v.length > 0 && v.length < 200, true);
+  check('esc stops typing', st.message.startsWith(T.stopped) && v.length > 0 && v.length < 200, true);
   check('esc not typed into field', v.includes('\u001b'), false);
 
   // pérdida de foco
@@ -80,7 +95,7 @@ const check = (name, got, want) => { const ok = JSON.stringify(got) === JSON.str
   await page.waitForTimeout(200);
   await page.focus('#inp');
   await wait();
-  check('focus lost msg', (await status()).message.startsWith('Detenido: el campo perdió el foco'), true);
+  check('focus lost msg', (await status()).message.startsWith(T.focus), true);
 
   // velocidad 0: no debe escribir de golpe y Esc debe poder detenerla
   await page.fill('#ta', ''); await page.focus('#ta');

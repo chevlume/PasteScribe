@@ -10,6 +10,11 @@
   // el texto aparece de golpe y la tecla Esc no llega a procesarse.
   const MIN_DELAY_MS = 5;
 
+  // Textos traducidos (carpeta _locales). Si no hubiera traducción, muestra la clave.
+  const t = (key, ...subs) => {
+    try { return chrome.i18n.getMessage(key, subs.map(String)) || key; } catch (_) { return key; }
+  };
+
   const state = { running: false, stop: false, phase: "idle", typed: 0, total: 0, message: "" };
 
   // ---------- utilidades ----------
@@ -116,7 +121,7 @@
         "border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;max-width:340px;";
       overlayText = document.createElement("span");
       const btn = document.createElement("button");
-      btn.textContent = "Detener";
+      btn.textContent = t("csStopButton");
       btn.style.cssText = "font:inherit;cursor:pointer;border:0;border-radius:5px;padding:3px 9px;background:#ef4444;color:#fff;";
       btn.addEventListener("click", () => stop());
       box.append(overlayText, btn);
@@ -148,7 +153,7 @@
       if (isEditable(el) && document.hasFocus()) return el;
       if (!announced) {
         state.phase = "waiting";
-        showOverlay("PasteScribe: haz clic en un campo de texto para empezar (Esc cancela)");
+        showOverlay(t("csWaitOverlay"));
         announced = true;
       }
       await sleep(120);
@@ -157,19 +162,19 @@
   }
 
   async function start(cfg) {
-    if (state.running) return { ok: false, error: "Ya hay una escritura en curso." };
+    if (state.running) return { ok: false, error: t("csBusy") };
     const text = String(cfg.text ?? "").replace(/\r\n?/g, "\n");
-    if (!text) return { ok: false, error: "No hay texto que escribir." };
+    if (!text) return { ok: false, error: t("csNoText") };
 
     Object.assign(state, { running: true, stop: false, phase: "waiting", typed: 0, total: text.length, message: "" });
     document.addEventListener("keydown", onKeydown, true);
-    run(text, cfg).catch((err) => finish(`Error: ${err && err.message ? err.message : err}`));
+    run(text, cfg).catch((err) => finish(t("csError", err && err.message ? err.message : err)));
     return { ok: true };
   }
 
   async function run(text, cfg) {
     const target = await waitForField();
-    if (!target) return finish(state.stop ? "Cancelado." : "No se encontró ningún campo de texto.");
+    if (!target) return finish(state.stop ? t("csCancelled") : t("csNoField"));
 
     state.phase = "typing";
     const chars = Array.from(text); // respeta emojis y caracteres compuestos
@@ -180,18 +185,16 @@
     for (let i = 0; i < chars.length; i++) {
       if (state.stop) break;
       if (deepActiveElement() !== target) {
-        return finish(`Detenido: el campo perdió el foco (${state.typed} de ${chars.length} caracteres).`);
+        return finish(t("csFocusLost", state.typed, chars.length));
       }
-      showOverlay(`PasteScribe: escribiendo ${i + 1}/${chars.length} (Esc para detener)`);
+      showOverlay(t("csTypingOverlay", i + 1, chars.length));
       if (insertChar(target, chars[i])) state.typed++;
       else skipped++;
       if (i < chars.length - 1 && (await interruptibleSleep(charDelay(delay, !!cfg.humanize, chars[i])))) break;
     }
 
-    let msg = state.stop
-      ? `Detenido: ${state.typed} de ${chars.length} caracteres escritos.`
-      : `Listo: ${state.typed} caracteres escritos.`;
-    if (skipped) msg += ` (${skipped} no se pudieron escribir; ¿el campo es un editor propio como Google Docs?)`;
+    let msg = state.stop ? t("csStoppedSummary", state.typed, chars.length) : t("csDone", state.typed);
+    if (skipped) msg += t("csSkipped", skipped);
     finish(msg);
   }
 
