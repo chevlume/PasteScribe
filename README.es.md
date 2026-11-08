@@ -80,12 +80,12 @@ Limitaciones:
 
 ## Publicar en la Chrome Web Store
 
-Todo el material está preparado; falta tu cuenta de desarrollador. Los textos de la ficha, los permisos justificados y los datos de privacidad están en [`CHROMEWEBSTORE.md`](CHROMEWEBSTORE.md).
+El paquete, las políticas de privacidad y las imágenes están preparados; solo falta tu cuenta de desarrollador.
 
 1. Rellena tu correo en [`docs/privacy-policy.md`](docs/privacy-policy.md) (español) y [`docs/privacy-policy.en.md`](docs/privacy-policy.en.md) (inglés) y publícalas en una **URL pública** (por ejemplo, ese mismo archivo en GitHub si el repositorio es público, o un Gist público).
 2. Crea el paquete: `tools/package_extension.sh` (genera `dist/pastescribe-v<versión>.zip`). Sin Bash, comprime **el contenido** de `chrome-extension/` (que `manifest.json` quede en la raíz del ZIP).
 3. Entra en el [Panel para desarrolladores](https://chrome.google.com/webstore/devconsole), acepta el contrato y paga la cuota única de registro (5 USD).
-4. *Nuevo elemento* → sube el ZIP → completa *Ficha de Play Store*, *Privacidad* y *Distribución* con lo que indica `CHROMEWEBSTORE.md`. Imágenes en `store-assets/en/` y `store-assets/es/` (se regeneran con `LANG_UI=en node tools/make_store_assets.js`). La extensión está traducida al inglés (por defecto) y al español: el panel tiene un selector EN/ES.
+4. *Nuevo elemento* → sube el ZIP → completa *Ficha de Play Store*, *Privacidad* y *Distribución*. Propósito único: *escribe, letra por letra, un texto pegado por el usuario en el campo de texto enfocado de la pestaña activa*. Permisos a justificar: `activeTab` (actúa solo sobre la pestaña actual cuando el usuario pulsa el icono), `scripting` (inserta el script que escribe) y `storage` (guarda la velocidad y, durante la sesión del navegador, el texto pegado). Sin permisos de sitios web, sin datos recopilados, sin código remoto. Imágenes en `store-assets/en/` y `store-assets/es/` (se regeneran con `LANG_UI=en node tools/make_store_assets.js`). La extensión está traducida al inglés (por defecto) y al español: el panel tiene un selector EN/ES.
 5. *Enviar para revisión*. La primera revisión suele tardar de 1 a 3 días laborables.
 
 Para cada actualización: sube `version` en `chrome-extension/manifest.json`, vuelve a crear el ZIP y súbelo como nueva versión.

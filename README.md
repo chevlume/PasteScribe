@@ -82,12 +82,12 @@ Limitations:
 
 ## Publishing to the Chrome Web Store
 
-All the material is ready; you only need your developer account. The listing texts, permission justifications and privacy answers are in [`CHROMEWEBSTORE.md`](CHROMEWEBSTORE.md) (English and Spanish listings).
+The package, privacy policies and images are ready; you only need your developer account.
 
 1. Put your email in [`docs/privacy-policy.en.md`](docs/privacy-policy.en.md) (English) and [`docs/privacy-policy.md`](docs/privacy-policy.md) (Spanish) and publish them at a **public URL** (for example, the same file on GitHub if the repository is public, or a public Gist).
 2. Build the package: `tools/package_extension.sh` (creates `dist/pastescribe-v<version>.zip`). Without Bash, zip **the contents** of `chrome-extension/` (so `manifest.json` is at the root of the ZIP).
 3. Go to the [Developer Dashboard](https://chrome.google.com/webstore/devconsole), accept the agreement and pay the one-time registration fee (US$5).
-4. *New item* → upload the ZIP → complete *Store listing*, *Privacy* and *Distribution* as `CHROMEWEBSTORE.md` indicates. Images are in `store-assets/en/` and `store-assets/es/` (regenerate with `LANG_UI=en node tools/make_store_assets.js`). The extension is translated into English (default) and Spanish.
+4. *New item* → upload the ZIP → complete *Store listing*, *Privacy* and *Distribution*. Single purpose: *types text pasted by the user, letter by letter, into the focused text field of the active tab*. Permissions to justify: `activeTab` (acts only on the current tab when the user presses the icon), `scripting` (injects the typing script) and `storage` (saves speed and, for the browser session, the pasted text). No host permissions, no data collected, no remote code. Images are in `store-assets/en/` and `store-assets/es/` (regenerate with `LANG_UI=en node tools/make_store_assets.js`). The extension is translated into English (default) and Spanish.
 5. *Submit for review*. A first review usually takes 1–3 business days.
 
 For each update: bump `version` in `chrome-extension/manifest.json`, rebuild the ZIP and upload it as a new version.
