@@ -15,7 +15,7 @@ The interface is in **English by default**; switch to Spanish with the *Language
 
 ### Windows
 
-Download **`PasteScribe.exe`** from the [Releases](https://github.com/chevlume/PasteScribe/releases) page and double-click it. It is a single file and opens **without a console window**.
+Download **`PasteScribe.exe`** from the [Releases](https://github.com/chevlume/PasteScribe/releases) page and double-click it. It is a single file that **needs no Python and no installation**, and it opens **without a console window**.
 
 Heads-up: the `.exe` is not code-signed, so Windows SmartScreen may show "Windows protected your PC" (click *More info* → *Run anyway*), and some antivirus programs flag any program that types keys for you (a false positive). If an error happens, the details are saved in `%USERPROFILE%\.pastescribe.log`.
 
@@ -29,7 +29,7 @@ python -m pip install -r requirements.txt
 python pastescribe.py
 ```
 
-On Windows you can also double-click `iniciar_windows.bat`, which installs the dependencies and opens the app (no console window left open).
+On Windows you can also double-click `iniciar_windows.bat`, which checks that Python is installed, installs the dependencies and opens the app (no console window left open). If Python is missing, it tells you what to do.
 
 ### Using it
 
