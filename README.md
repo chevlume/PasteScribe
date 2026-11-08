@@ -58,11 +58,23 @@ Limitaciones:
 - Los editores que dibujan su propio texto (p. ej. Google Docs) no usan campos de texto estándar y pueden ignorarlo.
 - En campos de una sola línea los saltos de línea se convierten en espacios.
 
+## Publicar en la Chrome Web Store
+
+Todo el material está preparado; falta tu cuenta de desarrollador. Los textos de la ficha, los permisos justificados y los datos de privacidad están en [`CHROMEWEBSTORE.md`](CHROMEWEBSTORE.md).
+
+1. Rellena tu correo en [`docs/privacy-policy.md`](docs/privacy-policy.md) y publícala en una **URL pública** (por ejemplo, ese mismo archivo en GitHub si el repositorio es público, o un Gist público).
+2. Crea el paquete: `tools/package_extension.sh` (genera `dist/pastescribe-v<versión>.zip`). Sin Bash, comprime **el contenido** de `chrome-extension/` (que `manifest.json` quede en la raíz del ZIP).
+3. Entra en el [Panel para desarrolladores](https://chrome.google.com/webstore/devconsole), acepta el contrato y paga la cuota única de registro (5 USD).
+4. *Nuevo elemento* → sube el ZIP → completa *Ficha de Play Store*, *Privacidad* y *Distribución* con lo que indica `CHROMEWEBSTORE.md`. Imágenes en `store-assets/`.
+5. *Enviar para revisión*. La primera revisión suele tardar de 1 a 3 días laborables.
+
+Para cada actualización: sube `version` en `chrome-extension/manifest.json`, vuelve a crear el ZIP y súbelo como nueva versión.
+
 ## Pruebas
 
 ```bash
 cd desktop-app && python -m unittest discover -s tests     # motor de escritura
-npm i playwright && node chrome-extension/tests/content.test.js   # script de contenido en Chromium
+npm i playwright && node tests/extension/content.test.js   # script de contenido en Chromium
 ```
 
 `python tools/make_icons.py` regenera los iconos de la extensión.

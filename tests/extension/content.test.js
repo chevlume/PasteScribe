@@ -1,7 +1,7 @@
-// Ejecutar con: node chrome-extension/tests/content.test.js  (requiere: npm i playwright)
+// Ejecutar con: node tests/extension/content.test.js  (requiere: npm i playwright)
 const { chromium } = require('playwright');
 const fs = require('fs');
-const contentJs = fs.readFileSync(require('path').join(__dirname, '..', 'content.js'), 'utf8');
+const contentJs = fs.readFileSync(require('path').join(__dirname, '..', '..', 'chrome-extension', 'content.js'), 'utf8');
 const html = `<!doctype html><body>
 <input id="inp" type="text"><textarea id="ta"></textarea>
 <div id="ce" contenteditable="true" style="min-height:40px;border:1px solid"></div>
