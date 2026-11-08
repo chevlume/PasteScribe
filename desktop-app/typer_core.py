@@ -8,6 +8,7 @@ probar sin pantalla y reutilizar con cualquier backend.
 from __future__ import annotations
 
 import random
+import re
 import time
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -18,6 +19,22 @@ SLICE_SECONDS = 0.02  # granularidad con la que se comprueba "detener"
 def normalize_text(text: str) -> str:
     """Unifica los saltos de línea a ``\\n``."""
     return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+NEWLINE_ENTER = "enter"   # cada salto de línea pulsa Enter (puede enviar formularios)
+NEWLINE_SPACE = "space"   # los saltos de línea (seguidos o no) pasan a ser un espacio
+NEWLINE_SKIP = "skip"     # se eliminan los saltos de línea
+
+
+def apply_newline_mode(text: str, mode: str) -> str:
+    """Adapta los saltos de línea de ``text`` (ya normalizados) al modo elegido."""
+    if mode == NEWLINE_ENTER:
+        return text
+    if mode == NEWLINE_SPACE:
+        return re.sub(r"\n+", " ", text)
+    if mode == NEWLINE_SKIP:
+        return text.replace("\n", "")
+    raise ValueError(f"Modo de salto de línea desconocido: {mode!r}")
 
 
 @dataclass

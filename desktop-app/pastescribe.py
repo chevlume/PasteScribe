@@ -14,9 +14,17 @@ import threading
 import tkinter as tk
 from tkinter import messagebox, scrolledtext, ttk
 
-from typer_core import normalize_text, type_text
+from keyboard_backend import ForegroundGuard, PynputBackend, make_stop_hotkey
+from typer_core import (NEWLINE_ENTER, NEWLINE_SKIP, NEWLINE_SPACE, apply_newline_mode,
+                        normalize_text, type_text)
 
 APP_TITLE = "PasteScribe"
+
+NEWLINE_CHOICES = {
+    "Convertir en espacio (seguro)": NEWLINE_SPACE,
+    "Pulsar Enter (textos de varias líneas)": NEWLINE_ENTER,
+    "Eliminar": NEWLINE_SKIP,
+}
 
 
 class App:
@@ -53,7 +61,8 @@ class App:
         self.delay_ms = tk.IntVar(value=60)
         self.countdown = tk.IntVar(value=5)
         self.humanize = tk.BooleanVar(value=True)
-        self.minimize = tk.BooleanVar(value=True)
+        self.minimize = tk.BooleanVar(value=False)
+        self.newline = tk.StringVar(value=next(iter(NEWLINE_CHOICES)))
 
         ttk.Label(opts, text="Pausa entre letras (ms):").grid(row=0, column=0, sticky="w")
         ttk.Spinbox(opts, from_=0, to=2000, increment=10, width=6, textvariable=self.delay_ms).grid(
@@ -61,10 +70,13 @@ class App:
         ttk.Label(opts, text="Cuenta atrás (s):").grid(row=0, column=2, sticky="w", padx=(16, 0))
         ttk.Spinbox(opts, from_=1, to=60, width=4, textvariable=self.countdown).grid(
             row=0, column=3, padx=6, sticky="w")
+        ttk.Label(opts, text="Saltos de línea:").grid(row=1, column=0, sticky="w", pady=(6, 0))
+        ttk.Combobox(opts, textvariable=self.newline, values=list(NEWLINE_CHOICES), state="readonly",
+                     width=36).grid(row=1, column=1, columnspan=3, padx=6, sticky="w", pady=(6, 0))
         ttk.Checkbutton(opts, text="Ritmo humano (variación aleatoria)", variable=self.humanize).grid(
-            row=1, column=0, columnspan=4, sticky="w", pady=(6, 0))
-        ttk.Checkbutton(opts, text="Minimizar esta ventana mientras escribe", variable=self.minimize).grid(
-            row=2, column=0, columnspan=4, sticky="w")
+            row=2, column=0, columnspan=4, sticky="w", pady=(6, 0))
+        ttk.Checkbutton(opts, text="Minimizar esta ventana mientras escribe (solo se detiene con Esc)",
+                        variable=self.minimize).grid(row=3, column=0, columnspan=4, sticky="w")
 
         btns = ttk.Frame(frm)
         btns.pack(fill="x")
@@ -92,8 +104,9 @@ class App:
     def start(self) -> None:
         if self.worker and self.worker.is_alive():
             return
-        text = normalize_text(self.text.get("1.0", "end-1c"))
-        if not text:
+        text = apply_newline_mode(
+            normalize_text(self.text.get("1.0", "end-1c")), NEWLINE_CHOICES[self.newline.get()])
+        if not text.strip():
             messagebox.showinfo(APP_TITLE, "Pega primero el texto que quieres escribir.")
             return
         try:
@@ -104,10 +117,8 @@ class App:
             return
 
         try:
-            from keyboard_backend import PynputBackend, StopHotkey
-
             backend = PynputBackend()
-            hotkey = StopHotkey(self.stop_flag.set)
+            hotkey = make_stop_hotkey(self.stop_flag.set)
             hotkey.start()
         except Exception as exc:  # pynput ausente, sin servidor X, etc.
             messagebox.showerror(
@@ -148,17 +159,30 @@ class App:
                 return
 
             self.events.put(("status", "Escribiendo… (Esc para detener)"))
+            guard = ForegroundGuard()
+            guard.arm()  # si cambia la ventana activa, se deja de escribir
+            window_changed = threading.Event()
+
+            def should_stop() -> bool:
+                if self.stop_flag.is_set():
+                    return True
+                if guard.changed():
+                    window_changed.set()
+                    return True
+                return False
+
             result = type_text(
                 text,
                 backend.send_char,
                 delay_ms=delay,
                 humanize=humanize,
-                should_stop=self.stop_flag.is_set,
+                should_stop=should_stop,
                 on_progress=lambda d, t: self.events.put(("progress", d)),
                 skip_errors=backend.unsupported_errors,
             )
             if result.stopped:
-                msg = f"Detenido: {result.typed} de {result.total} caracteres escritos."
+                why = " (cambió la ventana activa)" if window_changed.is_set() else ""
+                msg = f"Detenido{why}: {result.typed} de {result.total} caracteres escritos."
             else:
                 msg = f"Listo: {result.typed} caracteres escritos."
             if result.skipped:

@@ -5,7 +5,8 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from typer_core import char_delay, normalize_text, type_text  # noqa: E402
+from typer_core import (NEWLINE_ENTER, NEWLINE_SKIP, NEWLINE_SPACE, apply_newline_mode,  # noqa: E402
+                        char_delay, normalize_text, type_text)
 
 
 class NoSleep:
@@ -90,6 +91,75 @@ class TypeTextTests(unittest.TestCase):
     def test_empty_text(self):
         r = type_text("", lambda c: None, sleep=NoSleep())
         self.assertEqual((r.typed, r.total, r.stopped), (0, 0, False))
+
+
+class NewlineModeTests(unittest.TestCase):
+    def test_enter_keeps_newlines(self):
+        self.assertEqual(apply_newline_mode("a\nb\n\nc", NEWLINE_ENTER), "a\nb\n\nc")
+
+    def test_space_never_leaves_newlines_and_collapses_runs(self):
+        out = apply_newline_mode("linea1\nlinea2\n\n\nlinea3", NEWLINE_SPACE)
+        self.assertEqual(out, "linea1 linea2 linea3")
+        self.assertNotIn("\n", out)
+
+    def test_skip_removes_newlines(self):
+        self.assertEqual(apply_newline_mode("a\nb\n", NEWLINE_SKIP), "ab")
+
+    def test_unknown_mode_fails_loudly(self):
+        with self.assertRaises(ValueError):
+            apply_newline_mode("a", "otro")
+
+    def test_safe_mode_means_enter_is_never_sent(self):
+        sent = []
+        text = apply_newline_mode(normalize_text("Notas:\r\n- uno\r\n- dos\r\n"), NEWLINE_SPACE)
+        type_text(text, sent.append, delay_ms=0, sleep=NoSleep())
+        self.assertNotIn("\n", sent)
+
+
+class WindowsHelpersTests(unittest.TestCase):
+    def test_esc_poller_stops_when_pressed(self):
+        import threading
+        from keyboard_backend import WindowsEscPoller
+
+        fired = threading.Event()
+        state = {"n": 0}
+
+        def pressed():
+            state["n"] += 1
+            return state["n"] >= 3
+
+        poller = WindowsEscPoller(fired.set, is_pressed=pressed, interval=0.001)
+        poller.start()
+        self.assertTrue(fired.wait(2))
+        poller.stop()
+
+    def test_esc_poller_stop_before_press_never_fires(self):
+        import threading
+        from keyboard_backend import WindowsEscPoller
+
+        fired = threading.Event()
+        poller = WindowsEscPoller(fired.set, is_pressed=lambda: False, interval=0.001)
+        poller.start()
+        poller.stop()
+        self.assertFalse(fired.wait(0.05))
+
+    def test_foreground_guard(self):
+        from keyboard_backend import ForegroundGuard
+
+        current = {"w": 100}
+        g = ForegroundGuard(get_foreground=lambda: current["w"])
+        self.assertFalse(g.changed())  # sin armar no indica cambio
+        g.arm()
+        self.assertFalse(g.changed())
+        current["w"] = 200
+        self.assertTrue(g.changed())
+
+    def test_foreground_guard_noop_when_unsupported(self):
+        from keyboard_backend import ForegroundGuard
+
+        g = ForegroundGuard(get_foreground=lambda: None)
+        g.arm()
+        self.assertFalse(g.changed())
 
 
 if __name__ == "__main__":

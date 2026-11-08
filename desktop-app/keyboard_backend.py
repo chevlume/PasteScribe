@@ -5,6 +5,7 @@ from __future__ import annotations
 import inspect
 import sys
 import textwrap
+import threading
 import time
 
 
@@ -91,6 +92,76 @@ class PynputBackend:
             # En X11 la tecla prestada se remapea justo antes de pulsarla; esta
             # pausa deja que la aplicación asimile el cambio antes del siguiente.
             time.sleep(self._settle)
+
+
+class WindowsEscPoller:
+    """Detecta Esc consultando el estado del teclado cada pocos milisegundos.
+
+    A diferencia de un "hook" global, no se interpone en la entrada del
+    sistema: aunque la app vaya lenta, no retrasa el teclado del usuario.
+    """
+
+    VK_ESCAPE = 0x1B
+
+    def __init__(self, on_stop, is_pressed=None, interval: float = 0.02) -> None:
+        self._on_stop = on_stop
+        self._is_pressed = is_pressed or self._win_is_pressed
+        self._interval = interval
+        self._done = threading.Event()
+        self._thread = threading.Thread(target=self._loop, daemon=True)
+
+    @staticmethod
+    def _win_is_pressed() -> bool:
+        import ctypes
+
+        return bool(ctypes.windll.user32.GetAsyncKeyState(WindowsEscPoller.VK_ESCAPE) & 0x8000)
+
+    def _loop(self) -> None:
+        while not self._done.wait(self._interval):
+            if self._is_pressed():
+                self._on_stop()
+                return
+
+    def start(self) -> None:
+        self._thread.start()
+
+    def stop(self) -> None:
+        self._done.set()
+
+
+class ForegroundGuard:
+    """Detecta que la ventana activa cambió desde ``arm()`` (solo Windows).
+
+    Evita seguir escribiendo si el usuario cambia de programa o si otra
+    ventana roba el foco. En otros sistemas nunca indica cambio.
+    """
+
+    def __init__(self, get_foreground=None) -> None:
+        self._get = get_foreground or self._win_foreground
+        self._initial = None
+
+    @staticmethod
+    def _win_foreground():
+        if sys.platform != "win32":
+            return None
+        import ctypes
+
+        return ctypes.windll.user32.GetForegroundWindow()
+
+    def arm(self) -> None:
+        self._initial = self._get()
+
+    def changed(self) -> bool:
+        if self._initial is None:
+            return False
+        return self._get() != self._initial
+
+
+def make_stop_hotkey(on_stop):
+    """Esc global: consulta directa en Windows, escucha con pynput en el resto."""
+    if sys.platform == "win32":
+        return WindowsEscPoller(on_stop)
+    return StopHotkey(on_stop)
 
 
 class StopHotkey:

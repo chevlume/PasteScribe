@@ -24,10 +24,16 @@ En Windows también puedes hacer doble clic en `iniciar_windows.bat`, que instal
 3. Pulsa **Iniciar** y, durante la cuenta atrás, **haz clic en el campo de destino** (en cualquier aplicación).
 4. Empieza a escribir. **Esc** (en todo el sistema) o el botón *Detener* lo paran al instante.
 
+Seguridad:
+- **Saltos de línea** (opción por defecto: *Convertir en espacio*): pulsar Enter en un cuadro de búsqueda o en un formulario lo envía y rompe la escritura. Elige *Pulsar Enter* solo para campos de varias líneas (editores, `textarea`).
+- Si cambias de ventana mientras escribe (Alt+Tab, otra ventana que toma el foco), la escritura se detiene sola (solo Windows).
+- En Windows, Esc se detecta consultando el teclado, sin interceptar la entrada del sistema.
+- Si algo se descontrola: Esc; si no responde, cierra la app desde el Administrador de tareas (Ctrl+Mayús+Esc).
+
 Notas:
 - **macOS**: concede a la terminal/Python permisos de *Accesibilidad* y *Supervisión de entrada* (Ajustes del Sistema → Privacidad y seguridad), si no, el sistema ignora las teclas.
 - **Linux**: funciona en X11. En Wayland los programas no pueden inyectar teclas en otras ventanas; usa una sesión Xorg.
-- Los saltos de línea se escriben como Enter y los tabuladores como Tab (en un formulario web, Tab cambia de campo; en un editor de código, el autosangrado puede añadir espacios extra).
+- Los tabuladores se escriben como Tab (en un formulario web, Tab cambia de campo) y, con *Pulsar Enter*, en un editor de código el autosangrado puede añadir espacios extra.
 - En Linux, si escribes muchos caracteres exóticos a la vez, usa una pausa de **30 ms o más** (por defecto 60 ms).
 
 ## Extensión de Chrome (Manifest V3)
