@@ -1,12 +1,42 @@
 const $ = (id) => document.getElementById(id);
-const t = (key, ...subs) => chrome.i18n.getMessage(key, subs.map(String)) || key;
+const langEl = $("lang");
+
+// Idioma de la interfaz: inglés por defecto; el usuario puede cambiarlo y se recuerda.
+// Los textos salen de _locales/<idioma>/messages.json (los mismos que usa la tienda).
+let messages = {};
+let lang = "en";
+
+function format(entry, subs) {
+  const text = entry.message.replace(/\$([A-Za-z0-9_@]+)\$/g,
+    (_, name) => ((entry.placeholders && entry.placeholders[name.toLowerCase()]) || { content: "" }).content);
+  return text.replace(/\$([1-9])/g, (_, i) => (subs[i - 1] === undefined ? "" : String(subs[i - 1])));
+}
+
+const t = (key, ...subs) => (messages[key] ? format(messages[key], subs) : key);
+
+async function loadMessages(wanted) {
+  try {
+    const res = await fetch(chrome.runtime.getURL(`_locales/${wanted}/messages.json`));
+    messages = await res.json();
+    lang = wanted;
+  } catch (_) {
+    if (wanted !== "en") await loadMessages("en");
+  }
+}
 
 function applyI18n() {
-  document.documentElement.lang = chrome.i18n.getUILanguage().split("-")[0];
+  document.documentElement.lang = lang;
+  langEl.value = lang;
   for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
   for (const el of document.querySelectorAll("[data-i18n-placeholder]")) el.placeholder = t(el.dataset.i18nPlaceholder);
+  document.body.classList.add("ready");
 }
-applyI18n();
+
+// Los textos que el script de la página necesita para sus avisos en pantalla.
+function pageMessages() {
+  return Object.fromEntries(Object.entries(messages).filter(([key]) => key.startsWith("cs")));
+}
+
 const textEl = $("text");
 const delayEl = $("delay");
 const humanizeEl = $("humanize");
@@ -55,13 +85,16 @@ async function saveSettings() {
   } catch (_) { /* no es crítico */ }
 }
 
+let wantedLang = "en";
+
 async function loadSettings() {
   try {
-    const local = await chrome.storage.local.get({ delay: 60, humanize: true });
+    const local = await chrome.storage.local.get({ delay: 60, humanize: true, lang: "en" });
     const session = await chrome.storage.session.get({ text: "" });
     delayEl.value = local.delay;
     humanizeEl.checked = local.humanize;
     textEl.value = session.text;
+    wantedLang = local.lang;
   } catch (_) { /* valores por defecto */ }
   updateDelayLabel();
 }
@@ -96,6 +129,7 @@ startBtn.addEventListener("click", async () => {
       text,
       delayMs: Number(delayEl.value),
       humanize: humanizeEl.checked,
+      messages: pageMessages(),
     }]);
     if (!res.ok) {
       setStatus(res.error, true);
@@ -124,7 +158,15 @@ delayEl.addEventListener("input", () => { updateDelayLabel(); saveSettings(); })
 humanizeEl.addEventListener("change", saveSettings);
 textEl.addEventListener("input", saveSettings);
 
+langEl.addEventListener("change", async () => {
+  await loadMessages(langEl.value);
+  applyI18n();
+  try { await chrome.storage.local.set({ lang }); } catch (_) { /* no es crítico */ }
+});
+
 (async () => {
   await loadSettings();
+  await loadMessages(wantedLang);
+  applyI18n();
   await refreshStatus();
 })();

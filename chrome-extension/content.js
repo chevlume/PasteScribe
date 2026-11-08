@@ -10,8 +10,16 @@
   // el texto aparece de golpe y la tecla Esc no llega a procesarse.
   const MIN_DELAY_MS = 5;
 
-  // Textos traducidos (carpeta _locales). Si no hubiera traducción, muestra la clave.
+  // Textos traducidos. El popup envía los suyos en cfg.messages (el idioma lo elige
+  // el usuario); si no llegan, se usa el idioma del navegador (carpeta _locales).
+  let messages = null;
+  const format = (entry, subs) => {
+    const text = entry.message.replace(/\$([A-Za-z0-9_@]+)\$/g,
+      (_, name) => ((entry.placeholders && entry.placeholders[name.toLowerCase()]) || { content: "" }).content);
+    return text.replace(/\$([1-9])/g, (_, i) => (subs[i - 1] === undefined ? "" : String(subs[i - 1])));
+  };
   const t = (key, ...subs) => {
+    if (messages && messages[key]) return format(messages[key], subs);
     try { return chrome.i18n.getMessage(key, subs.map(String)) || key; } catch (_) { return key; }
   };
 
@@ -162,6 +170,7 @@
   }
 
   async function start(cfg) {
+    if (cfg.messages) messages = cfg.messages;
     if (state.running) return { ok: false, error: t("csBusy") };
     const text = String(cfg.text ?? "").replace(/\r\n?/g, "\n");
     if (!text) return { ok: false, error: t("csNoText") };

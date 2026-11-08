@@ -2,7 +2,7 @@
 
 > Last Updated: 2026-11-08
 >
-> La extensión está traducida (inglés por defecto + español, carpeta `_locales/`). En el panel, la ficha base es el inglés y se añade el español desde el selector de idioma de «Ficha de Play Store» → «Añadir idioma».
+> La extensión está traducida: la interfaz sale **en inglés por defecto** y el usuario puede cambiarla a español con el selector EN/ES del panel (se recuerda). Textos en `chrome-extension/_locales/`. En el panel, la ficha base es el inglés y se añade el español desde el selector de idioma de «Ficha de Play Store» → «Añadir idioma».
 
 ## Store Listing — ESPAÑOL (traducción)
 
@@ -23,6 +23,7 @@ FUNCIONES
 • Se detiene al instante con la tecla Esc o con el botón Detener
 • Si el campo pierde el foco, deja de escribir para no teclear donde no debe
 • Recuerda tu velocidad preferida
+• Interfaz en inglés y español, con selector en el panel
 
 CÓMO SE USA
 1. Haz clic en el campo de texto de la página donde quieras escribir.
@@ -42,7 +43,7 @@ No funciona en páginas internas de Chrome ni en la tienda de extensiones. Los e
 SOPORTE
 ¿Algún problema o sugerencia? Escríbenos a <TU_CORREO_DE_CONTACTO>.
 
-Versión 1.2.0: ya disponible en español e inglés. Una velocidad mínima evita que el texto aparezca de golpe y permite detenerlo siempre con Esc.
+Versión 1.3.0: ya disponible en español e inglés, con selector de idioma en el panel. Una velocidad mínima evita que el texto aparezca de golpe y permite detenerlo siempre con Esc.
 ```
 
 **Category** [REQUIRED]
@@ -73,6 +74,7 @@ FEATURES
 • Stops instantly with the Esc key or the Stop button
 • If the field loses focus, it stops typing so it doesn't type where it shouldn't
 • Remembers your preferred speed
+• Interface in English and Spanish, with a language switch in the panel
 
 HOW TO USE
 1. Click the text field on the page where you want to type.
@@ -92,7 +94,7 @@ It does not work on Chrome's internal pages or on the extension store. Editors t
 SUPPORT
 Found a problem or have a suggestion? Write to <YOUR_CONTACT_EMAIL>.
 
-Version 1.2.0: now available in English and Spanish. A minimum typing speed prevents text from appearing all at once and lets you always stop with Esc.
+Version 1.3.0: now available in English and Spanish, with a language switch in the panel. A minimum typing speed prevents text from appearing all at once and lets you always stop with Esc.
 ```
 
 **Category**
@@ -197,7 +199,8 @@ Pendiente (puede ser la página de Issues del repositorio si es público)
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
-| 1.2.0 | 2026-11-08 | Interfaz en inglés y español; ficha bilingüe. | Draft |
+| 1.3.0 | 2026-11-08 | Inglés por defecto con selector EN/ES en el panel; README en inglés. | Draft |
+| 1.2.0 | 2026-11-08 | Interfaz en inglés y español (según el idioma del navegador); ficha bilingüe. | No enviada |
 | 1.1.0 | 2026-11-08 | Pausa mínima por letra (Esc siempre funciona); indicador de progreso; versión mostrada. | No enviada |
 | 1.0.0 | 2026-11-08 | Primera versión (no se llegó a publicar). | Draft |
 
@@ -205,7 +208,7 @@ Pendiente (puede ser la página de Issues del repositorio si es público)
 
 ### Known Issues / Limitations
 - **Riesgo de revisión:** una extensión que escribe texto "como si lo tecleara una persona" puede examinarse con más atención, porque podría usarse para saltarse bloqueos de pegado o detección de bots. Las descripciones (ES y EN) deben ser honestas sobre su función (arriba lo es) y no sugerir esos usos. La opción de pausas irregulares se describe tal cual («variación aleatoria»).
-- Interfaz en inglés (por defecto) y español. Otros idiomas de Chrome ven la interfaz en inglés. Para añadir un idioma: carpeta nueva en `chrome-extension/_locales/<código>/messages.json` y su ficha en el panel.
+- Interfaz en inglés (por defecto) y español. La interfaz sale en inglés por defecto (cualquier idioma del navegador) y se cambia con el selector del panel. Para añadir un idioma: carpeta nueva en `chrome-extension/_locales/<código>/messages.json`, una opción en el selector de `popup.html` y su ficha en el panel.
 - No funciona en iframes de otro origen ni en editores que dibujan su propio texto.
 
 ### Rejection History

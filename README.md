@@ -1,15 +1,19 @@
 # PasteScribe
 
-Escribe un texto pegado **letra por letra**, como si lo teclearas tú. Hay dos versiones:
+🇬🇧 English · 🇪🇸 [Español](README.es.md)
 
-| | Dónde escribe | Carpeta |
+Types text you paste **letter by letter**, as if you were typing it yourself. Two versions:
+
+| | Where it types | Folder |
 |---|---|---|
-| **App de escritorio** | En cualquier programa, ventana o formulario del equipo que tenga el foco | [`desktop-app/`](desktop-app) |
-| **Extensión de Chrome** | Solo en la pestaña abierta en ese momento en el navegador | [`chrome-extension/`](chrome-extension) |
+| **Desktop app** | Into any program, window or form on your computer that has focus | [`desktop-app/`](desktop-app) |
+| **Chrome extension** | Only into the tab that is open in the browser at that moment | [`chrome-extension/`](chrome-extension) |
 
-## App de escritorio (Windows, macOS, Linux/X11)
+## Desktop app (Windows, macOS, Linux/X11)
 
-Requisitos: Python 3.9+ con `tkinter` y `pynput`.
+> The desktop app's interface is currently in **Spanish only** (the extension is bilingual).
+
+Requirements: Python 3.9+ with `tkinter` and `pynput`.
 
 ```bash
 cd desktop-app
@@ -17,64 +21,66 @@ python -m pip install -r requirements.txt
 python pastescribe.py
 ```
 
-En Windows también puedes hacer doble clic en `iniciar_windows.bat`, que instala las dependencias y abre la app.
+On Windows you can also double-click `iniciar_windows.bat`, which installs the dependencies and opens the app.
 
-1. Pega el texto en la ventana (Ctrl+V / Cmd+V o «Pegar del portapapeles»).
-2. Ajusta la pausa entre letras, la cuenta atrás y si quieres «ritmo humano».
-3. Pulsa **Iniciar** y, durante la cuenta atrás, **haz clic en el campo de destino** (en cualquier aplicación).
-4. Empieza a escribir. **Esc** (en todo el sistema) o el botón *Detener* lo paran al instante.
+1. Paste your text into the window (Ctrl+V / Cmd+V, or the "Pegar del portapapeles" button).
+2. Set the pause between letters, the countdown, and whether you want "Ritmo humano" (random variation of the pauses).
+3. Press **Iniciar** (Start) and, during the countdown, **click the target field** (in any application).
+4. It starts typing. **Esc** (system-wide) or the *Detener* (Stop) button stops it instantly.
 
-Seguridad:
-- **Saltos de línea** (opción por defecto: *Convertir en espacio*): pulsar Enter en un cuadro de búsqueda o en un formulario lo envía y rompe la escritura. Elige *Pulsar Enter* solo para campos de varias líneas (editores, `textarea`).
-- Si cambias de ventana mientras escribe (Alt+Tab, otra ventana que toma el foco), la escritura se detiene sola (solo Windows).
-- En Windows, Esc se detecta consultando el teclado, sin interceptar la entrada del sistema.
-- Si algo se descontrola: Esc; si no responde, cierra la app desde el Administrador de tareas (Ctrl+Mayús+Esc).
+Safety:
+- **Line breaks** (default: *Convertir en espacio*, i.e. turn them into spaces): pressing Enter in a search box or form submits it and breaks the typing. Choose *Pulsar Enter* only for multi-line fields (editors, `textarea`).
+- If you switch windows while it types (Alt+Tab, or another window grabbing focus), typing stops by itself (Windows only).
+- On Windows, Esc is detected by polling the keyboard, without hooking the system's input.
+- If something gets out of hand: Esc; if the system doesn't respond, close the app from Task Manager (Ctrl+Shift+Esc).
 
-Notas:
-- **macOS**: concede a la terminal/Python permisos de *Accesibilidad* y *Supervisión de entrada* (Ajustes del Sistema → Privacidad y seguridad), si no, el sistema ignora las teclas.
-- **Linux**: funciona en X11. En Wayland los programas no pueden inyectar teclas en otras ventanas; usa una sesión Xorg.
-- Los tabuladores se escriben como Tab (en un formulario web, Tab cambia de campo) y, con *Pulsar Enter*, en un editor de código el autosangrado puede añadir espacios extra.
-- La pausa mínima entre letras es de 10 ms (5 ms en la extensión). Sin pausa, el sistema recibe miles de teclas de golpe: el texto aparece "en bloque", el programa de destino sigue escribiendo cuando PasteScribe ya terminó y Esc no puede detenerlo.
-- En Linux, si escribes muchos caracteres exóticos a la vez, usa una pausa de **30 ms o más** (por defecto 60 ms).
+Notes:
+- **macOS**: grant your terminal/Python *Accessibility* and *Input Monitoring* permissions (System Settings → Privacy & Security), otherwise the system ignores the keystrokes.
+- **Linux**: works on X11. Under Wayland, programs cannot inject keystrokes into other windows; use an Xorg session.
+- Tabs are typed as the Tab key (in a web form, Tab moves to the next field) and, with *Pulsar Enter*, a code editor's auto-indent can add extra spaces.
+- The minimum pause between letters is 10 ms (5 ms in the extension). With no pause, the system receives thousands of keystrokes at once: the text appears "in a block", the target program keeps typing after PasteScribe has finished, and Esc cannot stop it.
+- On Linux, if you type many unusual characters at once, use a pause of **30 ms or more** (default 60 ms).
 
-## Extensión de Chrome (Manifest V3)
+## Chrome extension (Manifest V3)
 
-Instalación (modo desarrollador):
+The interface is in **English by default**; switch to Spanish with the EN/ES selector in the panel (your choice is remembered).
 
-1. Abre `chrome://extensions` y activa **Modo de desarrollador**.
-2. **Cargar descomprimida** → elige la carpeta `chrome-extension/`.
+Install (developer mode):
 
-Uso:
+1. Open `chrome://extensions` and turn on **Developer mode**.
+2. **Load unpacked** → choose the `chrome-extension/` folder.
 
-1. Haz clic en el campo de la página donde quieras escribir (cuadro de texto, `textarea`, campo de contraseña o editor `contenteditable`).
-2. Abre la extensión, pega el texto, ajusta la velocidad y pulsa **Escribir**. El popup se cierra y la escritura empieza.
-3. Si no había ningún campo enfocado, la extensión espera (hasta 60 s) a que hagas clic en uno.
-4. **Esc** en la página, el botón *Detener* del aviso en pantalla o *Detener* en el popup lo paran. Si el campo pierde el foco, la escritura se detiene para no escribir donde no debe.
+Use:
 
-Privacidad: solo actúa en la pestaña activa cuando pulsas el icono (permiso `activeTab`), no envía nada a ningún servidor y el texto solo se guarda en la sesión del navegador. Permisos: `activeTab`, `scripting`, `storage`.
+1. Click the field on the page where you want to type (text box, `textarea`, password field or `contenteditable` editor).
+2. Open the extension, paste your text, adjust the speed and press **Type**. The panel closes and typing begins.
+3. If no field was focused, the extension waits (up to 60 s) for you to click one.
+4. **Esc** on the page, the *Stop* button of the on-screen notice, or *Stop* in the panel, stops it. If the field loses focus, typing stops so it doesn't type where it shouldn't.
 
-Limitaciones:
-- No funciona en páginas internas (`chrome://…`, Chrome Web Store) ni en iframes de otro origen.
-- Los editores que dibujan su propio texto (p. ej. Google Docs) no usan campos de texto estándar y pueden ignorarlo.
-- En campos de una sola línea los saltos de línea se convierten en espacios.
+Privacy: it only acts on the active tab when you press the icon (`activeTab` permission), sends nothing to any server, and your text is only kept for the browser session. Permissions: `activeTab`, `scripting`, `storage`.
 
-## Publicar en la Chrome Web Store
+Limitations:
+- It does not work on internal pages (`chrome://…`, the Chrome Web Store) or in cross-origin iframes.
+- Editors that draw their own text (e.g. Google Docs) don't use standard text fields and may ignore it.
+- In single-line fields, line breaks are turned into spaces.
 
-Todo el material está preparado; falta tu cuenta de desarrollador. Los textos de la ficha, los permisos justificados y los datos de privacidad están en [`CHROMEWEBSTORE.md`](CHROMEWEBSTORE.md).
+## Publishing to the Chrome Web Store
 
-1. Rellena tu correo en [`docs/privacy-policy.md`](docs/privacy-policy.md) (español) y [`docs/privacy-policy.en.md`](docs/privacy-policy.en.md) (inglés) y publícalas en una **URL pública** (por ejemplo, ese mismo archivo en GitHub si el repositorio es público, o un Gist público).
-2. Crea el paquete: `tools/package_extension.sh` (genera `dist/pastescribe-v<versión>.zip`). Sin Bash, comprime **el contenido** de `chrome-extension/` (que `manifest.json` quede en la raíz del ZIP).
-3. Entra en el [Panel para desarrolladores](https://chrome.google.com/webstore/devconsole), acepta el contrato y paga la cuota única de registro (5 USD).
-4. *Nuevo elemento* → sube el ZIP → completa *Ficha de Play Store*, *Privacidad* y *Distribución* con lo que indica `CHROMEWEBSTORE.md`. Imágenes en `store-assets/en/` y `store-assets/es/` (se regeneran con `LANG_UI=en node tools/make_store_assets.js`). La extensión está traducida al inglés (por defecto) y al español.
-5. *Enviar para revisión*. La primera revisión suele tardar de 1 a 3 días laborables.
+All the material is ready; you only need your developer account. The listing texts, permission justifications and privacy answers are in [`CHROMEWEBSTORE.md`](CHROMEWEBSTORE.md) (English and Spanish listings).
 
-Para cada actualización: sube `version` en `chrome-extension/manifest.json`, vuelve a crear el ZIP y súbelo como nueva versión.
+1. Put your email in [`docs/privacy-policy.en.md`](docs/privacy-policy.en.md) (English) and [`docs/privacy-policy.md`](docs/privacy-policy.md) (Spanish) and publish them at a **public URL** (for example, the same file on GitHub if the repository is public, or a public Gist).
+2. Build the package: `tools/package_extension.sh` (creates `dist/pastescribe-v<version>.zip`). Without Bash, zip **the contents** of `chrome-extension/` (so `manifest.json` is at the root of the ZIP).
+3. Go to the [Developer Dashboard](https://chrome.google.com/webstore/devconsole), accept the agreement and pay the one-time registration fee (US$5).
+4. *New item* → upload the ZIP → complete *Store listing*, *Privacy* and *Distribution* as `CHROMEWEBSTORE.md` indicates. Images are in `store-assets/en/` and `store-assets/es/` (regenerate with `LANG_UI=en node tools/make_store_assets.js`). The extension is translated into English (default) and Spanish.
+5. *Submit for review*. A first review usually takes 1–3 business days.
 
-## Pruebas
+For each update: bump `version` in `chrome-extension/manifest.json`, rebuild the ZIP and upload it as a new version.
+
+## Tests
 
 ```bash
-cd desktop-app && python -m unittest discover -s tests     # motor de escritura
-npm i playwright && LANG_UI=es node tests/extension/content.test.js && LANG_UI=en node tests/extension/content.test.js   # script de contenido en Chromium
+cd desktop-app && python -m unittest discover -s tests     # typing engine
+npm i playwright && LANG_UI=en node tests/extension/content.test.js && LANG_UI=es node tests/extension/content.test.js   # content script in Chromium
 ```
 
-`python tools/make_icons.py` regenera los iconos de la extensión.
+`python tools/make_icons.py` regenerates the extension icons.

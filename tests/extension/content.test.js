@@ -4,14 +4,6 @@ const fs = require('fs');
 const contentJs = fs.readFileSync(require('path').join(__dirname, '..', '..', 'chrome-extension', 'content.js'), 'utf8');
 const LANG = process.env.LANG_UI || 'es';
 const messages = JSON.parse(fs.readFileSync(require('path').join(__dirname, '..', '..', 'chrome-extension', '_locales', LANG, 'messages.json'), 'utf8'));
-// Imita chrome.i18n.getMessage (placeholders $NAME$ -> $1..$9 -> sustituciones)
-const i18nStub = (messages) => {
-  window.chrome = { i18n: { getUILanguage: () => 'xx', getMessage: (key, subs = []) => {
-    const m = messages[key]; if (!m) return '';
-    const text = m.message.replace(/\$([A-Za-z0-9_@]+)\$/g, (_, n) => (m.placeholders && m.placeholders[n.toLowerCase()] || { content: '' }).content);
-    return text.replace(/\$([1-9])/g, (_, i) => (subs[i - 1] === undefined ? '' : subs[i - 1]));
-  } } };
-};
 const T = {
   es: { done16: 'Listo: 16 caracteres escritos.', cancelled: 'Cancelado.', stopped: 'Detenido:', focus: 'Detenido: el campo perdió el foco' },
   en: { done16: 'Done: 16 characters typed.', cancelled: 'Cancelled.', stopped: 'Stopped:', focus: 'Stopped: the field lost focus' },
@@ -27,9 +19,9 @@ const check = (name, got, want) => { const ok = JSON.stringify(got) === JSON.str
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.setContent(html);
-  await page.evaluate(i18nStub, messages);
   await page.evaluate(contentJs);
-  const start = (cfg) => page.evaluate((c) => window.__pastescribe.start(c), cfg);
+  // El popup envía los textos del idioma elegido en cfg.messages (aquí: los mismos archivos _locales)
+  const start = (cfg) => page.evaluate((c) => window.__pastescribe.start(c), { ...cfg, messages });
   const wait = () => page.waitForFunction(() => !window.__pastescribe.status().running, null, { timeout: 15000 });
   const status = () => page.evaluate(() => window.__pastescribe.status());
 

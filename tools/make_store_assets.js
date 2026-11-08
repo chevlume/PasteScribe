@@ -47,10 +47,13 @@ button{margin-top:20px;padding:10px 22px;border:0;border-radius:8px;background:#
 <button>${COPY.send}</button></main></html>`;
 
 // Simula chrome.* para renderizar el popup real sin instalarlo (solo para la captura).
+const allMessages = Object.fromEntries(['en', 'es'].map((l) =>
+  [l, JSON.parse(fs.readFileSync(path.join(ext, '_locales', l, 'messages.json'), 'utf8'))]));
 const chromeStub = (text, delay) => `
-  window.chrome = Object.assign(window.chrome || {}, { tabs: { query: async () => [{ id: 1 }] },
+  window.fetch = async (url) => ({ ok: true, json: async () => (${JSON.stringify(allMessages)})[/_locales\\/(\\w+)\\//.exec(url)[1]] });
+  window.chrome = Object.assign(window.chrome || {}, { runtime: { getURL: (p) => p }, tabs: { query: async () => [{ id: 1 }] },
     scripting: { executeScript: async (o) => [{ result: o.func ? { running: false, phase: 'idle', typed: 0, total: 0, message: '' } : undefined }] },
-    storage: { local: { get: async (d) => ({ ...d, delay: ${delay}, humanize: true }), set: async () => {} },
+    storage: { local: { get: async (d) => ({ ...d, delay: ${delay}, humanize: true, lang: ${JSON.stringify(LANG)} }), set: async () => {} },
                session: { get: async (d) => ({ ...d, text: ${JSON.stringify(text)} }), set: async () => {} } } });`;
 
 (async () => {
@@ -59,10 +62,10 @@ const chromeStub = (text, delay) => `
   // 1) Popup real (alta resolución) para componer
   const popupCtx = await browser.newContext({ viewport: { width: 340, height: 600 }, deviceScaleFactor: 2 });
   const popup = await popupCtx.newPage();
-  await popup.addInitScript(i18nStub, { messages, lang: LANG });
   await popup.addInitScript(chromeStub(SAMPLE, 60));
   await popup.goto('file://' + path.join(ext, 'popup', 'popup.html'));
-  await popup.waitForTimeout(300);
+  await popup.waitForSelector('body.ready');
+  await popup.waitForTimeout(200);
   const popupBox = await popup.evaluate(() => ({ h: Math.ceil(document.body.getBoundingClientRect().height) }));
   const popupPng = await popup.screenshot({ clip: { x: 0, y: 0, width: 340, height: popupBox.h } });
 

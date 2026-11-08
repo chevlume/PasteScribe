@@ -1,7 +1,11 @@
 :root { color-scheme: light dark; --accent: #2563eb; --bg: #ffffff; --fg: #111827; --muted: #6b7280; --border: #d1d5db; }
 @media (prefers-color-scheme: dark) { :root { --bg: #1f2937; --fg: #f3f4f6; --muted: #9ca3af; --border: #4b5563; } }
 body { width: 340px; margin: 0; padding: 14px; box-sizing: border-box; font: 13px/1.4 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
-h1 { margin: 0 0 8px; font-size: 16px; }
+body:not(.ready) { visibility: hidden; }
+.head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+h1 { margin: 0; font-size: 16px; }
+select { font: inherit; color: inherit; background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 2px 4px; }
+select option { color: #111827; }
 label { display: block; margin-bottom: 4px; }
 textarea { width: 100%; box-sizing: border-box; resize: vertical; padding: 6px; font: inherit; color: inherit; background: transparent; border: 1px solid var(--border); border-radius: 6px; }
 .row { display: flex; align-items: center; gap: 8px; margin: 10px 0 6px; }

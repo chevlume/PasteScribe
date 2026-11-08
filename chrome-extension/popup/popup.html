@@ -7,7 +7,13 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h1>PasteScribe</h1>
+  <div class="head">
+    <h1>PasteScribe</h1>
+    <select id="lang" aria-label="Language">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
+  </div>
   <label for="text" data-i18n="popupTextLabel"></label>
   <textarea id="text" rows="8" data-i18n-placeholder="popupTextPlaceholder" spellcheck="false"></textarea>
 
