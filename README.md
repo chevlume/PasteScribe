@@ -13,9 +13,11 @@ Requisitos: Python 3.9+ con `tkinter` y `pynput`.
 
 ```bash
 cd desktop-app
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 python pastescribe.py
 ```
+
+En Windows también puedes hacer doble clic en `iniciar_windows.bat`, que instala las dependencias y abre la app.
 
 1. Pega el texto en la ventana (Ctrl+V / Cmd+V o «Pegar del portapapeles»).
 2. Ajusta la pausa entre letras, la cuenta atrás y si quieres «ritmo humano».

@@ -9,6 +9,7 @@ durante la cuenta atrás y deja que PasteScribe escriba. Esc detiene.
 from __future__ import annotations
 
 import queue
+import sys
 import threading
 import tkinter as tk
 from tkinter import messagebox, scrolledtext, ttk
@@ -112,7 +113,8 @@ class App:
             messagebox.showerror(
                 APP_TITLE,
                 f"No se pudo iniciar el control del teclado:\n{exc}\n\n"
-                "Instala las dependencias con: pip install -r requirements.txt")
+                "Instala las dependencias con:\n"
+                f'"{sys.executable}" -m pip install -r requirements.txt')
             return
 
         self.stop_flag.clear()
