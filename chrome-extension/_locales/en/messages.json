@@ -1,0 +1,135 @@
+{
+  "extDescription": {
+    "message": "Types text you paste, letter by letter, into the text field of the active tab. Adjustable speed; stop anytime with Esc."
+  },
+  "actionTitle": {
+    "message": "PasteScribe"
+  },
+  "popupTextLabel": {
+    "message": "Text to type in the current tab"
+  },
+  "popupTextPlaceholder": {
+    "message": "Paste your text here (Ctrl+V)…"
+  },
+  "popupDelayLabel": {
+    "message": "Pause between letters"
+  },
+  "popupHumanize": {
+    "message": "Irregular pauses (random variation)"
+  },
+  "popupStart": {
+    "message": "Type"
+  },
+  "popupStop": {
+    "message": "Stop"
+  },
+  "popupHint": {
+    "message": "Click the target field first, then press “Type”. If no field is focused, it waits until you click one."
+  },
+  "popupErrNoText": {
+    "message": "Paste the text you want to type first."
+  },
+  "popupErrRestricted": {
+    "message": "This page doesn't allow extensions (e.g. chrome:// pages or the Chrome Web Store). Open a regular web page."
+  },
+  "popupErrGeneric": {
+    "message": "Error: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupWaiting": {
+    "message": "Waiting for you to click a text field…"
+  },
+  "popupTyping": {
+    "message": "Typing… $TYPED$/$TOTAL$",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "popupStopped": {
+    "message": "Stopped."
+  },
+  "csBusy": {
+    "message": "A typing session is already running."
+  },
+  "csNoText": {
+    "message": "There is no text to type."
+  },
+  "csWaitOverlay": {
+    "message": "PasteScribe: click a text field to start (Esc cancels)"
+  },
+  "csTypingOverlay": {
+    "message": "PasteScribe: typing $CURRENT$/$TOTAL$ (Esc to stop)",
+    "placeholders": {
+      "current": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "csStopButton": {
+    "message": "Stop"
+  },
+  "csCancelled": {
+    "message": "Cancelled."
+  },
+  "csNoField": {
+    "message": "No text field was found."
+  },
+  "csFocusLost": {
+    "message": "Stopped: the field lost focus ($TYPED$ of $TOTAL$ characters).",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "csStoppedSummary": {
+    "message": "Stopped: $TYPED$ of $TOTAL$ characters typed.",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "csDone": {
+    "message": "Done: $TYPED$ characters typed.",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      }
+    }
+  },
+  "csSkipped": {
+    "message": " ($SKIPPED$ could not be typed; is the field a custom editor such as Google Docs?)",
+    "placeholders": {
+      "skipped": {
+        "content": "$1"
+      }
+    }
+  },
+  "csError": {
+    "message": "Error: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  }
+}

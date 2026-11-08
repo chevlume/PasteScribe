@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PasteScribe</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="head">
+    <h1>PasteScribe</h1>
+    <select id="lang" aria-label="Language">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
+  </div>
+  <label for="text" data-i18n="popupTextLabel"></label>
+  <textarea id="text" rows="8" data-i18n-placeholder="popupTextPlaceholder" spellcheck="false"></textarea>
+
+  <div class="row">
+    <label for="delay" data-i18n="popupDelayLabel"></label>
+    <input id="delay" type="range" min="5" max="500" step="5" value="60">
+    <output id="delayOut">60 ms</output>
+  </div>
+  <label class="check"><input id="humanize" type="checkbox" checked> <span data-i18n="popupHumanize"></span></label>
+
+  <div class="buttons">
+    <button id="start" class="primary" data-i18n="popupStart"></button>
+    <button id="stop" disabled data-i18n="popupStop"></button>
+  </div>
+  <p id="status" role="status" data-i18n="popupHint"></p>
+
+  <script src="popup.js"></script>
+</body>
+</html>

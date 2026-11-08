@@ -1,0 +1,135 @@
+{
+  "extDescription": {
+    "message": "Escribe un texto pegado letra por letra en el campo de texto de la pestaña activa. Velocidad ajustable y parada con Esc."
+  },
+  "actionTitle": {
+    "message": "PasteScribe"
+  },
+  "popupTextLabel": {
+    "message": "Texto a escribir en la pestaña actual"
+  },
+  "popupTextPlaceholder": {
+    "message": "Pega aquí el texto (Ctrl+V)…"
+  },
+  "popupDelayLabel": {
+    "message": "Pausa entre letras"
+  },
+  "popupHumanize": {
+    "message": "Pausas irregulares (variación aleatoria)"
+  },
+  "popupStart": {
+    "message": "Escribir"
+  },
+  "popupStop": {
+    "message": "Detener"
+  },
+  "popupHint": {
+    "message": "Haz clic antes en el campo de destino y pulsa «Escribir». Si no hay ninguno enfocado, espera a que hagas clic en uno."
+  },
+  "popupErrNoText": {
+    "message": "Pega primero el texto que quieres escribir."
+  },
+  "popupErrRestricted": {
+    "message": "Esta página no permite extensiones (p. ej. chrome:// o la Chrome Web Store). Abre una página web normal."
+  },
+  "popupErrGeneric": {
+    "message": "Error: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupWaiting": {
+    "message": "Esperando a que hagas clic en un campo de texto…"
+  },
+  "popupTyping": {
+    "message": "Escribiendo… $TYPED$/$TOTAL$",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "popupStopped": {
+    "message": "Detenido."
+  },
+  "csBusy": {
+    "message": "Ya hay una escritura en curso."
+  },
+  "csNoText": {
+    "message": "No hay texto que escribir."
+  },
+  "csWaitOverlay": {
+    "message": "PasteScribe: haz clic en un campo de texto para empezar (Esc cancela)"
+  },
+  "csTypingOverlay": {
+    "message": "PasteScribe: escribiendo $CURRENT$/$TOTAL$ (Esc para detener)",
+    "placeholders": {
+      "current": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "csStopButton": {
+    "message": "Detener"
+  },
+  "csCancelled": {
+    "message": "Cancelado."
+  },
+  "csNoField": {
+    "message": "No se encontró ningún campo de texto."
+  },
+  "csFocusLost": {
+    "message": "Detenido: el campo perdió el foco ($TYPED$ de $TOTAL$ caracteres).",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "csStoppedSummary": {
+    "message": "Detenido: $TYPED$ de $TOTAL$ caracteres escritos.",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "csDone": {
+    "message": "Listo: $TYPED$ caracteres escritos.",
+    "placeholders": {
+      "typed": {
+        "content": "$1"
+      }
+    }
+  },
+  "csSkipped": {
+    "message": " ($SKIPPED$ no se pudieron escribir; ¿el campo es un editor propio como Google Docs?)",
+    "placeholders": {
+      "skipped": {
+        "content": "$1"
+      }
+    }
+  },
+  "csError": {
+    "message": "Error: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  }
+}
