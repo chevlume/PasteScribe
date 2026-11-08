@@ -1,4 +1,4 @@
-"""Prueba la lógica de pastescribe.App con tkinter simulado (sin pantalla)."""
+"""Logic tests for pastescribe.App without a screen (fake backend, fake widgets)."""
 import os
 import queue
 import sys
@@ -9,10 +9,13 @@ from unittest import mock
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-# tkinter puede no estar instalado en el entorno de pruebas
-for name in ("tkinter", "tkinter.ttk", "tkinter.messagebox", "tkinter.scrolledtext"):
-    sys.modules.setdefault(name, mock.MagicMock())
-sys.modules["tkinter"].TclError = type("TclError", (Exception,), {})
+# tkinter may not be installed where the tests run: simulate it only in that case
+try:
+    import tkinter  # noqa: F401
+except ImportError:
+    for name in ("tkinter", "tkinter.ttk", "tkinter.messagebox", "tkinter.scrolledtext"):
+        sys.modules[name] = mock.MagicMock()
+    sys.modules["tkinter"].TclError = type("TclError", (Exception,), {})
 
 import pastescribe  # noqa: E402
 
@@ -39,6 +42,7 @@ def make_app():
     app = pastescribe.App.__new__(pastescribe.App)
     app.events = queue.Queue()
     app.stop_flag = threading.Event()
+    app.lang = "en"
     return app
 
 
@@ -56,7 +60,7 @@ class RunTests(unittest.TestCase):
         self.assertEqual("".join(backend.sent), "hola mundo")
         self.assertTrue(hotkey.stopped)
         done = [v for k, v in drain(app) if k == "done"]
-        self.assertEqual(done, ["Listo: 10 caracteres escritos."])
+        self.assertEqual(done, ["Done: 10 characters typed."])
 
     def test_esc_stops_typing(self):
         app, backend, hotkey = make_app(), FakeBackend(), FakeHotkey()
@@ -64,14 +68,14 @@ class RunTests(unittest.TestCase):
         app._run("x" * 500, 20, 1, False, backend, hotkey)
         self.assertTrue(0 < len(backend.sent) < 500)
         done = [v for k, v in drain(app) if k == "done"][0]
-        self.assertTrue(done.startswith("Detenido:"))
+        self.assertTrue(done.startswith("Stopped:"))
 
     def test_stop_during_countdown_types_nothing(self):
         app, backend, hotkey = make_app(), FakeBackend(), FakeHotkey()
         app.stop_flag.set()
         app._run("abc", 0, 3, False, backend, hotkey)
         self.assertEqual(backend.sent, [])
-        self.assertIn(("done", "Cancelado antes de empezar."), drain(app))
+        self.assertIn(("done", "Cancelled before starting."), drain(app))
 
     def test_window_change_stops_typing(self):
         app, backend, hotkey = make_app(), FakeBackend(), FakeHotkey()
@@ -86,16 +90,16 @@ class RunTests(unittest.TestCase):
             app._run("y" * 500, 20, 1, False, backend, hotkey)
         self.assertTrue(0 < len(backend.sent) < 500)
         done = [v for k, v in drain(app) if k == "done"][0]
-        self.assertIn("cambió la ventana activa", done)
+        self.assertIn("the active window changed", done)
 
     def test_start_default_never_sends_enter(self):
-        """Con la opción por defecto, un texto de varias líneas no pulsa Enter."""
+        """With the default option, multi-line text never presses Enter."""
         app = make_app()
         app.worker = None
         app.text = mock.MagicMock()
-        app.text.get.return_value = "Notas:\n- uno\n- dos\n"
-        app.newline = mock.MagicMock()
-        app.newline.get.return_value = next(iter(pastescribe.NEWLINE_CHOICES))
+        app.text.get.return_value = "Notes:\n- one\n- two\n"
+        app.newline_index = mock.MagicMock(get=lambda: 0)  # default: turn line breaks into spaces
+        app.lang_combo = mock.MagicMock()
         app.delay_ms = mock.MagicMock(get=lambda: 0)
         app.countdown = mock.MagicMock(get=lambda: 1)
         app.humanize = mock.MagicMock(get=lambda: False)
@@ -109,14 +113,14 @@ class RunTests(unittest.TestCase):
              mock.patch.object(pastescribe, "make_stop_hotkey", lambda cb: hotkey):
             app.start()
             app.worker.join(10)
-        self.assertEqual("".join(backend.sent), "Notas: - uno - dos ")
+        self.assertEqual("".join(backend.sent), "Notes: - one - two ")
         self.assertNotIn("\n", backend.sent)
 
     def test_start_without_pynput_shows_pip_command(self):
         app = make_app()
         app.worker = None
-        app.text = mock.MagicMock(get=lambda *a: "hola")
-        app.newline = mock.MagicMock(get=lambda: next(iter(pastescribe.NEWLINE_CHOICES)))
+        app.text = mock.MagicMock(get=lambda *a: "hello")
+        app.newline_index = mock.MagicMock(get=lambda: 0)
         app.delay_ms = mock.MagicMock(get=lambda: 0)
         app.countdown = mock.MagicMock(get=lambda: 1)
 
@@ -127,6 +131,7 @@ class RunTests(unittest.TestCase):
              mock.patch.object(pastescribe.messagebox, "showerror") as err:
             app.start()
         msg = err.call_args[0][1]
+        self.assertTrue(msg.startswith("Could not start keyboard control:"))
         self.assertIn(sys.executable, msg)
         self.assertIn("-m pip install -r requirements.txt", msg)
 

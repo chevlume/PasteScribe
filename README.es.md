@@ -11,6 +11,21 @@ Escribe un texto pegado **letra por letra**, como si lo teclearas tú. Hay dos v
 
 ## App de escritorio (Windows, macOS, Linux/X11)
 
+La interfaz sale **en inglés por defecto**; cámbiala a español con el selector *Idioma* de la ventana (se recuerda).
+
+### Windows: un único `.exe`, sin ventana de consola
+
+Compílalo una vez en tu PC con Windows (necesita Python 3.9+ instalado):
+
+1. Haz doble clic en **`desktop-app\build_windows.bat`**. Instala lo necesario, compila y comprueba la app.
+2. Coge **`desktop-app\dist\PasteScribe.exe`** y cópialo donde quieras (por ejemplo, el escritorio). Doble clic: se abre **sin ventana de consola**.
+
+¿Sin un PC con Windows a mano? En GitHub, pestaña *Actions* → *Build Windows exe* → *Run workflow*, y descarga `PasteScribe-windows` desde *Artifacts* de la ejecución.
+
+Ojo: el `.exe` no está firmado digitalmente, así que Windows SmartScreen puede mostrar «Windows protegió su PC» (pulsa *Más información* → *Ejecutar de todas formas*), y algunos antivirus marcan como sospechoso cualquier programa que teclea por ti (falso positivo). Si ocurre un error, los detalles se guardan en `%USERPROFILE%\.pastescribe.log`.
+
+### Ejecutar desde el código (cualquier sistema)
+
 Requisitos: Python 3.9+ con `tkinter` y `pynput`.
 
 ```bash
@@ -19,10 +34,12 @@ python -m pip install -r requirements.txt
 python pastescribe.py
 ```
 
-En Windows también puedes hacer doble clic en `iniciar_windows.bat`, que instala las dependencias y abre la app.
+En Windows también puedes hacer doble clic en `iniciar_windows.bat`, que instala las dependencias y abre la app (sin dejar una consola abierta).
 
-1. Pega el texto en la ventana (Ctrl+V / Cmd+V o «Pegar del portapapeles»).
-2. Ajusta la pausa entre letras, la cuenta atrás y si quieres «ritmo humano».
+### Uso
+
+1. Pega el texto en la ventana (Ctrl+V / Cmd+V o *Pegar del portapapeles*).
+2. Ajusta la pausa entre letras, la cuenta atrás y si quieres pausas irregulares (variación aleatoria).
 3. Pulsa **Iniciar** y, durante la cuenta atrás, **haz clic en el campo de destino** (en cualquier aplicación).
 4. Empieza a escribir. **Esc** (en todo el sistema) o el botón *Detener* lo paran al instante.
 
@@ -75,7 +92,8 @@ Para cada actualización: sube `version` en `chrome-extension/manifest.json`, vu
 ## Pruebas
 
 ```bash
-cd desktop-app && python -m unittest discover -s tests     # motor de escritura
+cd desktop-app && python -m unittest discover -s tests     # motor de escritura, traducciones, lógica de la ventana
+xvfb-run -a python tests/gui_real_test.py                  # la ventana real (necesita tkinter y un servidor X; Linux)
 npm i playwright && LANG_UI=es node tests/extension/content.test.js && LANG_UI=en node tests/extension/content.test.js   # script de contenido en Chromium
 ```
 

@@ -11,7 +11,20 @@ Types text you paste **letter by letter**, as if you were typing it yourself. Tw
 
 ## Desktop app (Windows, macOS, Linux/X11)
 
-> The desktop app's interface is currently in **Spanish only** (the extension is bilingual).
+The interface is in **English by default**; switch to Spanish with the *Language* selector in the window (your choice is remembered).
+
+### Windows: a single `.exe`, no console window
+
+Build it once on your Windows PC (needs Python 3.9+ installed):
+
+1. Double-click **`desktop-app\build_windows.bat`**. It installs what it needs, builds and self-tests the app.
+2. Take **`desktop-app\dist\PasteScribe.exe`** and copy it wherever you like (e.g. your desktop). Double-click it: it opens **without a console window**.
+
+No Windows PC at hand? Open the *Actions* tab on GitHub → *Build Windows exe* → *Run workflow*, then download `PasteScribe-windows` from the run's *Artifacts*.
+
+Heads-up: the `.exe` is not code-signed, so Windows SmartScreen may show "Windows protected your PC" (click *More info* → *Run anyway*), and some antivirus programs flag any program that types keys for you (a false positive). If an error happens, the details are saved in `%USERPROFILE%\.pastescribe.log`.
+
+### Run it from source (any system)
 
 Requirements: Python 3.9+ with `tkinter` and `pynput`.
 
@@ -21,15 +34,17 @@ python -m pip install -r requirements.txt
 python pastescribe.py
 ```
 
-On Windows you can also double-click `iniciar_windows.bat`, which installs the dependencies and opens the app.
+On Windows you can also double-click `iniciar_windows.bat`, which installs the dependencies and opens the app (no console window left open).
 
-1. Paste your text into the window (Ctrl+V / Cmd+V, or the "Pegar del portapapeles" button).
-2. Set the pause between letters, the countdown, and whether you want "Ritmo humano" (random variation of the pauses).
-3. Press **Iniciar** (Start) and, during the countdown, **click the target field** (in any application).
-4. It starts typing. **Esc** (system-wide) or the *Detener* (Stop) button stops it instantly.
+### Using it
+
+1. Paste your text into the window (Ctrl+V / Cmd+V, or *Paste from clipboard*).
+2. Set the pause between letters, the countdown, and whether you want irregular pauses (random variation).
+3. Press **Start** and, during the countdown, **click the target field** (in any application).
+4. It starts typing. **Esc** (system-wide) or the *Stop* button stops it instantly.
 
 Safety:
-- **Line breaks** (default: *Convertir en espacio*, i.e. turn them into spaces): pressing Enter in a search box or form submits it and breaks the typing. Choose *Pulsar Enter* only for multi-line fields (editors, `textarea`).
+- **Line breaks** (default: *Turn into a space*): pressing Enter in a search box or form submits it and breaks the typing. Choose *Press Enter* only for multi-line fields (editors, `textarea`).
 - If you switch windows while it types (Alt+Tab, or another window grabbing focus), typing stops by itself (Windows only).
 - On Windows, Esc is detected by polling the keyboard, without hooking the system's input.
 - If something gets out of hand: Esc; if the system doesn't respond, close the app from Task Manager (Ctrl+Shift+Esc).
@@ -37,7 +52,7 @@ Safety:
 Notes:
 - **macOS**: grant your terminal/Python *Accessibility* and *Input Monitoring* permissions (System Settings → Privacy & Security), otherwise the system ignores the keystrokes.
 - **Linux**: works on X11. Under Wayland, programs cannot inject keystrokes into other windows; use an Xorg session.
-- Tabs are typed as the Tab key (in a web form, Tab moves to the next field) and, with *Pulsar Enter*, a code editor's auto-indent can add extra spaces.
+- Tabs are typed as the Tab key (in a web form, Tab moves to the next field) and, with *Press Enter*, a code editor's auto-indent can add extra spaces.
 - The minimum pause between letters is 10 ms (5 ms in the extension). With no pause, the system receives thousands of keystrokes at once: the text appears "in a block", the target program keeps typing after PasteScribe has finished, and Esc cannot stop it.
 - On Linux, if you type many unusual characters at once, use a pause of **30 ms or more** (default 60 ms).
 
@@ -79,7 +94,8 @@ For each update: bump `version` in `chrome-extension/manifest.json`, rebuild the
 ## Tests
 
 ```bash
-cd desktop-app && python -m unittest discover -s tests     # typing engine
+cd desktop-app && python -m unittest discover -s tests     # typing engine, translations, window logic
+xvfb-run -a python tests/gui_real_test.py                  # the real window (needs tkinter + an X server; Linux)
 npm i playwright && LANG_UI=en node tests/extension/content.test.js && LANG_UI=es node tests/extension/content.test.js   # content script in Chromium
 ```
 
