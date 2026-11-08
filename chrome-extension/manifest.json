@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PasteScribe",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Escribe un texto pegado letra por letra en el campo de texto de la pestaña activa.",
   "permissions": ["activeTab", "scripting", "storage"],
   "action": {

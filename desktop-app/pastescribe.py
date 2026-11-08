@@ -18,6 +18,7 @@ from keyboard_backend import ForegroundGuard, PynputBackend, make_stop_hotkey
 from typer_core import (NEWLINE_ENTER, NEWLINE_SKIP, NEWLINE_SPACE, apply_newline_mode,
                         MIN_DELAY_MS, normalize_text, type_text)
 
+__version__ = "1.3.0"
 APP_TITLE = "PasteScribe"
 
 NEWLINE_CHOICES = {
@@ -34,7 +35,7 @@ class App:
         self.stop_flag = threading.Event()
         self.worker: threading.Thread | None = None
 
-        root.title(APP_TITLE)
+        root.title(f"{APP_TITLE} {__version__}")
         root.geometry("560x480")
         root.minsize(480, 420)
         self._build_ui()
